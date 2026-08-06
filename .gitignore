@@ -10,3 +10,9 @@ backend/uploads/
 
 # YOLO output
 runs/
+
+# Audio Model
+backend/audio_model/AnimalModel/
+
+# Uploaded files
+backend/uploads/
