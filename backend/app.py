@@ -3,6 +3,7 @@ import os
 import shutil
 from backend.predict import predict_image
 from backend.predict_audio import predict_audio
+from backend.predict_reid import predict_reid
 app = FastAPI()
 
 BASE_DIR = os.path.dirname(__file__)
@@ -48,4 +49,22 @@ async def upload_audio(file: UploadFile = File(...)):
     return {
         "filename": file.filename,
         "prediction": prediction
+    }
+
+@app.post("/re-identify")
+async def reidentify(file: UploadFile = File(...)):
+
+    file_path = os.path.join(
+        IMAGE_UPLOAD_FOLDER,
+        file.filename
+    )
+
+    with open(file_path, "wb") as buffer:
+        shutil.copyfileobj(file.file, buffer)
+
+    result = predict_reid(file_path)
+
+    return {
+        "filename": file.filename,
+        **result
     }

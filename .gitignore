@@ -16,3 +16,6 @@ backend/audio_model/AnimalModel/
 
 # Uploaded files
 backend/uploads/
+
+# Re-identification database
+backend/reid_database/*.pkl
