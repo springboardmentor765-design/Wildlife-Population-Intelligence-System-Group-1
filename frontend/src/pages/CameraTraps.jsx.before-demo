@@ -1,0 +1,250 @@
+import { useState } from 'react';
+import { Camera, Filter, ScanEye } from 'lucide-react';
+import { PageHeader } from '../components/layout/PageHeader';
+import { Card, CardBody, CardHeader } from '../components/ui/Card';
+import { FileUpload } from '../components/ui/FileUpload';
+import { TrapFrame } from '../components/ui/TrapFrame';
+import { Modal } from '../components/ui/Modal';
+import { Badge, IucnBadge, StatusBadge } from '../components/ui/Badge';
+import { Button } from '../components/ui/Button';
+import { Select } from '../components/ui/Field';
+import { SkeletonCards } from '../components/ui/Skeleton';
+import { EmptyState, ErrorState } from '../components/ui/States';
+import { useAsync } from '../hooks/useAsync';
+import { imageService } from '../services/imageService';
+import { mockSites } from '../mock/sites';
+import { confidenceTone, formatDateTime } from '../utils/format';
+
+export default function CameraTraps() {
+  const [siteId, setSiteId] = useState('');
+  const { data: images, loading, error, reload } = useAsync(
+    () => imageService.list({ siteId: siteId || undefined }),
+    [siteId]
+  );
+
+  const [uploading, setUploading] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [selected, setSelected] = useState(null);
+  const [activeBox, setActiveBox] = useState(null);
+
+  const upload = async (files) => {
+    setUploading(true);
+    setProgress(0);
+    try {
+      await imageService.upload(files, { siteId, onProgress: setProgress });
+      reload();
+    } finally {
+      setUploading(false);
+      setProgress(0);
+    }
+  };
+
+  return (
+    <>
+      <PageHeader
+        eyebrow="Field data"
+        title="Camera trap images"
+        description="Uploads run through detection and species classification before they appear in the gallery."
+      />
+
+      <div className="grid gap-6 xl:grid-cols-[1fr_380px]">
+        <Card className="xl:order-2 xl:self-start">
+          <CardHeader eyebrow="Ingest" title="Upload captures" />
+          <CardBody>
+            <FileUpload
+              accept="image/*"
+              label="Drop camera trap images here"
+              hint="JPG or PNG, up to 25 MB each"
+              onUpload={upload}
+              uploading={uploading}
+              progress={progress}
+            />
+            <div className="mt-4">
+              <label className="field-label">Attribute to site</label>
+              <Select value={siteId} onChange={(e) => setSiteId(e.target.value)}>
+                <option value="">All sites</option>
+                {mockSites.map((s) => (
+                  <option key={s.id} value={s.id}>{s.location}</option>
+                ))}
+              </Select>
+            </div>
+          </CardBody>
+        </Card>
+
+        <div className="xl:order-1">
+          <div className="mb-4 flex items-center justify-between gap-3">
+            <p className="text-sm text-ink-500">
+              {loading ? 'Loading captures…' : `${images?.length ?? 0} captures`}
+              {siteId && ' at the selected site'}
+            </p>
+            {siteId && (
+              <Button size="sm" variant="ghost" icon={Filter} onClick={() => setSiteId('')}>
+                Clear filter
+              </Button>
+            )}
+          </div>
+
+          {loading && <SkeletonCards count={6} height="h-56" />}
+          {error && !loading && <ErrorState message={error} onRetry={reload} />}
+
+          {!loading && !error && images?.length === 0 && (
+            <Card>
+              <EmptyState
+                icon={Camera}
+                title="No captures from this site yet"
+                message="Drop images into the upload panel, or switch to All sites to see the rest of the landscape."
+              />
+            </Card>
+          )}
+
+          {!loading && !error && images?.length > 0 && (
+            <div className="grid gap-4 sm:grid-cols-2 2xl:grid-cols-3">
+              {images.map((img) => (
+                <button
+                  key={img.id ?? img.filename}
+                  onClick={() => { setSelected(img); setActiveBox(null); }}
+                  className="group overflow-hidden rounded-2xl border border-sand-200/70 bg-white text-left shadow-card transition hover:shadow-lift"
+                >
+                  <TrapFrame image={img} className="aspect-[4/3]" />
+                  <div className="p-4">
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="min-w-0">
+                        <p className="truncate text-sm font-medium text-ink-900">
+                          {img.boxes?.[0]?.common ??
+                            img.species ??
+                            img.filename ??
+                            'Camera capture'}
+                        </p>
+
+                        <p className="truncate text-[12px] text-ink-500">
+                          {img.site ?? 'Uploaded media'}
+                        </p>
+                      </div>
+
+                      <StatusBadge
+                        status={img.status ?? 'analyzed'}
+                      />
+                    </div>
+
+                    <div className="mt-3 flex items-center gap-3 text-[12px] text-ink-500">
+                      <span className="font-mono">
+                        {img.capturedAt
+                          ? formatDateTime(img.capturedAt)
+                          : `${Math.round((img.size ?? 0) / 1024)} KB`}
+                      </span>
+
+                      {img.animalCount !== undefined && (
+                        <>
+                          <span>·</span>
+                          <span>
+                            {img.animalCount} animal
+                            {img.animalCount === 1 ? '' : 's'}
+                          </span>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+
+      <Modal
+        open={!!selected}
+        onClose={() => setSelected(null)}
+        size="xl"
+        title={
+          selected?.boxes?.[0]?.common ??
+          selected?.species ??
+          selected?.filename ??
+          'Capture detail'
+        }
+        description={
+          selected
+            ? selected.site
+              ? `${selected.site}${selected.capturedAt
+                ? ` · ${formatDateTime(selected.capturedAt)}`
+                : ''
+              }`
+              : `${selected.filename} · ${Math.round(
+                (selected.size ?? 0) / 1024
+              )} KB`
+            : ''
+        }
+      >
+        {selected && (
+          <div className="grid gap-6 lg:grid-cols-[1.5fr_1fr]">
+            <div>
+              <TrapFrame image={selected} activeBox={activeBox} className="aspect-[4/3]" />
+              <div className="mt-3 flex flex-wrap gap-2">
+                <Badge>{selected.mode === 'infrared' ? 'Infrared capture' : 'Daylight capture'}</Badge>
+                <Badge>Behaviour: {selected.behaviour}</Badge>
+                <Badge>Image quality {Math.round(selected.quality * 100)}%</Badge>
+                {selected.moon !== '—' && <Badge>Moon: {selected.moon}</Badge>}
+              </div>
+            </div>
+
+            <div>
+              <div className="flex items-center gap-2 rounded-xl bg-sand-50 p-4">
+                <ScanEye size={18} className="text-moss-500" />
+                <div>
+                  <p className="font-display text-2xl leading-none text-ink-900">{selected.animalCount}</p>
+                  <p className="text-[12px] text-ink-500">animals counted in frame</p>
+                </div>
+              </div>
+
+              <p className="eyebrow mt-5 mb-2">Detections</p>
+              {(selected.boxes?.length ?? 0) === 0 ? (
+                <p className="rounded-lg border border-dashed border-sand-300 px-4 py-6 text-center text-sm text-ink-500">
+                  The detector found nothing above threshold. Flagged for manual review.
+                </p>
+              ) : (
+                <ul className="space-y-2">
+                  {(selected.boxes ?? []).map((b, i) => (
+                    <li
+                      key={i}
+                      onMouseEnter={() => setActiveBox(i)}
+                      onMouseLeave={() => setActiveBox(null)}
+                      className="rounded-xl border border-sand-200 p-3.5 transition hover:border-moss-300 hover:bg-moss-50/40"
+                    >
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="min-w-0">
+                          <p className="truncate text-sm font-medium text-ink-900">{b.common}</p>
+                          <p className="binomial truncate text-[12px]">{b.label}</p>
+                        </div>
+                        <span className={`font-mono text-sm ${confidenceTone(b.confidence)}`}>
+                          {Math.round(b.confidence * 100)}%
+                        </span>
+                      </div>
+                      <div className="mt-2.5 flex items-center justify-between gap-2">
+                        <IucnBadge code={b.iucn} showLabel={false} />
+                        <span className="font-mono text-[11px] text-ink-500">
+                          box {b.x},{b.y} · {b.w}×{b.h}
+                        </span>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              )}
+
+              <dl className="mt-5 space-y-2.5 border-t border-sand-200 pt-4 text-sm">
+                {[
+                  ['File', selected.filename],
+                  ['Temperature', selected.temperature],
+                  ['Site', selected.site],
+                ].map(([k, v]) => (
+                  <div key={k} className="flex justify-between gap-3">
+                    <dt className="text-ink-500">{k}</dt>
+                    <dd className="truncate font-mono text-[12px] text-ink-900">{v}</dd>
+                  </div>
+                ))}
+              </dl>
+            </div>
+          </div>
+        )}
+      </Modal>
+    </>
+  );
+}
