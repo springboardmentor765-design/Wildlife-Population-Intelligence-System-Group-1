@@ -401,112 +401,66 @@ async def upload_image(file: UploadFile = File(...)):
 
 @app.get("/images")
 def list_images():
+    """
+    Return uploaded image files.
+
+    The frontend expects an array of image records.
+    """
     try:
-        with get_connection() as conn:
-            with conn.cursor() as cur:
+        if not os.path.exists(IMAGE_UPLOAD_FOLDER):
+            return []
 
-                rows = cur.execute(
-                    """
-                    SELECT
-                        ma.id AS media_id,
-                        ma.original_filename,
-                        ma.storage_path,
-                        ma.mime_type,
-                        ma.file_size_bytes,
-                        ma.created_at,
+        images = []
 
-                        ir.id AS inference_run_id,
-                        ir.status AS inference_status,
-                        ir.started_at,
-                        ir.completed_at,
+        for filename in sorted(
+            os.listdir(IMAGE_UPLOAD_FOLDER),
+            reverse=True,
+        ):
+            file_path = os.path.join(
+                IMAGE_UPLOAD_FOLDER,
+                filename,
+            )
 
-                        d.id AS detection_id,
-                        d.class_id,
-                        d.confidence,
-                        d.x1,
-                        d.y1,
-                        d.x2,
-                        d.y2,
+            if not os.path.isfile(file_path):
+                continue
 
-                        d.species_id,
-                        s.name AS species_name,
-                        s.scientific_name
-
-                    FROM media_assets ma
-
-                    LEFT JOIN inference_runs ir
-                        ON ir.media_id = ma.id
-
-                    LEFT JOIN image_detections d
-                        ON d.inference_run_id = ir.id
-
-                    LEFT JOIN species s
-                        ON s.id = d.species_id
-
-                    WHERE ma.media_type = 'image'
-
-                    ORDER BY ma.created_at DESC
-                    """
-                ).fetchall()
-
-        images = {}
-
-        for row in rows:
-
-            media_id = str(row["media_id"])
-
-            if media_id not in images:
-
-                images[media_id] = {
-                    "id": media_id,
-                    "filename": row["original_filename"],
-                    "url": f"http://localhost:8000/images/{row['original_filename']}",
+            images.append(
+                {
+                    "filename": filename,
+                    "url": f"/images/{filename}",
                     "type": "image",
-                    "size": row["file_size_bytes"],
-
-                    "status": (
-                        "analyzed"
-                        if row["inference_status"] == "completed"
-                        else row["inference_status"] or "uploaded"
-                    ),
-
-                    "capturedAt": (
-                        row["completed_at"].isoformat()
-                        if row["completed_at"]
-                        else row["created_at"].isoformat()
-                    ),
-
-                    "animalCount": 0,
-                    "boxes": [],
+                    "size": os.path.getsize(file_path),
                 }
+            )
 
-            image = images[media_id]
-
-            if row["detection_id"]:
-
-                image["animalCount"] += 1
-
-                image["boxes"].append({
-                    "id": str(row["detection_id"]),
-                    "classId": row["class_id"],
-                    "common": row["species_name"] or "Unknown",
-                    "scientific": row["scientific_name"] or "",
-                    "confidence": float(row["confidence"] or 0),
-
-                    "x1": float(row["x1"] or 0),
-                    "y1": float(row["y1"] or 0),
-                    "x2": float(row["x2"] or 0),
-                    "y2": float(row["y2"] or 0),
-                })
-
-        return list(images.values())
+        return images
 
     except Exception as exc:
-
         raise HTTPException(
             status_code=500,
-            detail=f"Unable to load images: {exc}",
+            detail=f"Unable to list images: {exc}",
         )
+
+
+@app.get("/images/{filename}")
+def get_image(filename: str):
+    """
+    Serve an uploaded image.
+    """
+    filename = safe_filename(filename)
+
+    file_path = os.path.join(
+        IMAGE_UPLOAD_FOLDER,
+        filename,
+    )
+
+    if not os.path.isfile(file_path):
+        raise HTTPException(
+            status_code=404,
+            detail="Image not found",
+        )
+
+    return FileResponse(file_path)
 
 # ============================================================
 # AUDIO UPLOAD
@@ -796,43 +750,6 @@ def get_audio(filename: str):
         raise HTTPException(
             status_code=404,
             detail="Audio file not found",
-        )
-
-    return FileResponse(file_path)
-
-
-
-@app.get("/media/images/{filename}")
-def serve_uploaded_image(filename: str):
-    filename = os.path.basename(filename)
-
-    file_path = os.path.join(
-        IMAGE_UPLOAD_FOLDER,
-        filename
-    )
-
-    if not os.path.isfile(file_path):
-        raise HTTPException(
-            status_code=404,
-            detail="Image not found"
-        )
-
-    return FileResponse(file_path)
-
-
-@app.get("/media/audio/{filename}")
-def serve_uploaded_audio(filename: str):
-    filename = os.path.basename(filename)
-
-    file_path = os.path.join(
-        AUDIO_UPLOAD_FOLDER,
-        filename
-    )
-
-    if not os.path.isfile(file_path):
-        raise HTTPException(
-            status_code=404,
-            detail="Audio not found"
         )
 
     return FileResponse(file_path)

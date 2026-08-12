@@ -1,0 +1,50 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+  }
+  body {
+    @apply bg-sand-100 text-ink-900 font-sans;
+  }
+  /* Scientific convention: binomial names are set in italic serif */
+  .binomial {
+    @apply font-display italic text-ink-700;
+  }
+  :focus-visible {
+    @apply outline-none ring-2 ring-moss-400 ring-offset-2 ring-offset-sand-100 rounded-md;
+  }
+}
+
+@layer components {
+  .field-label {
+    @apply block text-[11px] font-semibold uppercase tracking-[0.12em] text-ink-500 mb-1.5;
+  }
+  .field-input {
+    @apply w-full rounded-lg border border-sand-300 bg-white px-3 py-2.5 text-sm text-ink-900
+           placeholder:text-ink-500/60 transition
+           focus:border-moss-400 focus:outline-none focus:ring-2 focus:ring-moss-200;
+  }
+  /* Eyebrow used above section titles — mirrors a field-notebook header */
+  .eyebrow {
+    @apply font-mono text-[11px] uppercase tracking-[0.18em] text-moss-500;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Leaflet sits under our sticky chrome */
+.leaflet-container {
+  z-index: 0;
+  border-radius: 0.875rem;
+  font-family: 'Inter', sans-serif;
+}

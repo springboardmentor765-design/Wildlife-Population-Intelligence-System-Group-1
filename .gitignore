@@ -1,21 +1,48 @@
-# Virtual Environment
-venv/
+# Environment / secrets
+.env
+.env.*
+!.env.example
 
 # Python
 __pycache__/
-*.pyc
+*.py[cod]
+*.pyo
+.venv/
+venv/
+ENV/
+.pytest_cache/
+.mypy_cache/
 
-# Backend generated files
-backend/uploads/
+# Node
+node_modules/
+dist/
+build/
+.vite/
 
-# YOLO output
-runs/
+# macOS
+.DS_Store
 
-# Audio Model
-backend/audio_model/AnimalModel/
+# IDE
+.vscode/
+.idea/
 
-# Uploaded files
-backend/uploads/
+# Logs
+*.log
 
-# Re-identification database
-backend/reid_database/*.pkl
+# Python databases / local DB files
+*.sqlite
+*.sqlite3
+*.db
+
+# PostgreSQL local/runtime files
+postgres-data/
+pgdata/
+
+# Uploaded/generated runtime files
+uploads/
+media/
+storage/
+
+# ML generated/cache files
+*.cache
+backend/audio_model/AnimalModel/model.safetensors
