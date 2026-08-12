@@ -622,7 +622,7 @@ def predict_reid(
     image_path
 ):
 
-    from predict import predict_image
+    from backend.predict import predict_image
 
     detections = predict_image(
         image_path
