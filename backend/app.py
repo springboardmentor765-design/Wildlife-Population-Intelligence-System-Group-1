@@ -5,10 +5,13 @@ from fastapi.middleware.cors import CORSMiddleware
 import os
 import shutil
 import json
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 
 import psycopg
 from psycopg.rows import dict_row
+
+import bcrypt
+import jwt
 
 from backend.predict import predict_image
 from backend.predict_audio import predict_audio
@@ -72,6 +75,13 @@ DATABASE_URL = os.getenv(
     "postgresql://wildlife_app:CHANGE_ME@localhost:5432/wildlife_db",
 )
 
+JWT_SECRET = os.getenv(
+    "JWT_SECRET",
+    "wildlife-development-secret-change-this",
+)
+
+JWT_ALGORITHM = "HS256"
+JWT_EXPIRATION_HOURS = 24
 
 def get_connection():
     return psycopg.connect(
@@ -83,6 +93,34 @@ def get_connection():
 # ============================================================
 # HELPERS
 # ============================================================
+
+def hash_password(password: str) -> str:
+    password_bytes = password.encode("utf-8")
+    salt = bcrypt.gensalt()
+    hashed = bcrypt.hashpw(password_bytes, salt)
+    return hashed.decode("utf-8")
+
+
+def verify_password(password: str, password_hash: str) -> bool:
+    return bcrypt.checkpw(
+        password.encode("utf-8"),
+        password_hash.encode("utf-8"),
+    )
+
+
+def create_access_token(user_id: str, email: str) -> str:
+    payload = {
+        "sub": user_id,
+        "email": email,
+        "exp": datetime.now(timezone.utc)
+        + timedelta(hours=JWT_EXPIRATION_HOURS),
+    }
+
+    return jwt.encode(
+        payload,
+        JWT_SECRET,
+        algorithm=JWT_ALGORITHM,
+    )
 
 def safe_filename(filename: str) -> str:
     """
@@ -140,6 +178,178 @@ def get_species_id(cur, species_name):
 # ============================================================
 # HEALTH
 # ============================================================
+
+@app.post("/auth/register")
+def register_user(payload: dict):
+    name = str(payload.get("name", "")).strip()
+    email = str(payload.get("email", "")).strip().lower()
+    password = str(payload.get("password", ""))
+
+    # Basic validation
+    if not name:
+        raise HTTPException(status_code=400, detail="Name is required")
+
+    if not email:
+        raise HTTPException(status_code=400, detail="Email is required")
+
+    if not password:
+        raise HTTPException(status_code=400, detail="Password is required")
+
+    if len(password) < 6:
+        raise HTTPException(
+            status_code=400,
+            detail="Password must be at least 6 characters",
+        )
+
+    password_hash = hash_password(password)
+
+    try:
+        with get_connection() as conn:
+            with conn.cursor() as cur:
+
+                # Check whether email already exists
+                cur.execute(
+                    """
+                    SELECT id
+                    FROM users
+                    WHERE email = %s
+                    """,
+                    (email,),
+                )
+
+                if cur.fetchone():
+                    raise HTTPException(
+                        status_code=409,
+                        detail="Email is already registered",
+                    )
+
+                # Create user
+                cur.execute(
+                    """
+                    INSERT INTO users
+                        (name, email, password_hash)
+                    VALUES
+                        (%s, %s, %s)
+                    RETURNING id, name, email, role, created_at
+                    """,
+                    (name, email, password_hash),
+                )
+
+                user = cur.fetchone()
+                conn.commit()
+
+                user_id = str(user["id"])
+
+                token = create_access_token(
+                    user_id=user_id,
+                    email=user["email"],
+                )
+
+                return {
+                    "access_token": token,
+                    "token_type": "bearer",
+                    "user": {
+                        "id": user_id,
+                        "name": user["name"],
+                        "email": user["email"],
+                        "role": user["role"],
+                        "created_at": user["created_at"],
+                    },
+                }
+
+    except HTTPException:
+        raise
+
+    except psycopg.errors.UniqueViolation:
+        raise HTTPException(
+            status_code=409,
+            detail="Email is already registered",
+        )
+
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Registration failed: {str(e)}",
+        )
+
+@app.post("/auth/login")
+def login_user(payload: dict):
+    email = str(payload.get("email", "")).strip().lower()
+    password = str(payload.get("password", ""))
+
+    if not email:
+        raise HTTPException(
+            status_code=400,
+            detail="Email is required",
+        )
+
+    if not password:
+        raise HTTPException(
+            status_code=400,
+            detail="Password is required",
+        )
+
+    try:
+        with get_connection() as conn:
+            with conn.cursor() as cur:
+
+                cur.execute(
+                    """
+                    SELECT id, name, email, role, created_at, password_hash
+                    FROM users
+                    WHERE email = %s
+                    """,
+                    (email,),
+                )
+
+                user = cur.fetchone()
+
+                if not user:
+                    raise HTTPException(
+                        status_code=401,
+                        detail="Invalid email or password",
+                    )
+
+                if not user["password_hash"]:
+                    raise HTTPException(
+                        status_code=401,
+                        detail="Invalid email or password",
+                    )
+
+                if not verify_password(
+                    password,
+                    user["password_hash"],
+                ):
+                    raise HTTPException(
+                        status_code=401,
+                        detail="Invalid email or password",
+                    )
+
+                token = create_access_token(
+                    user_id=str(user["id"]),
+                    email=user["email"],
+                )
+
+                return {
+                    "access_token": token,
+                    "token_type": "bearer",
+                    "user": {
+                        "id": str(user["id"]),
+                        "name": user["name"],
+                        "email": user["email"],
+                        "role": user["role"],
+                        "created_at": user["created_at"],
+                    },
+                }
+
+    except HTTPException:
+        raise
+
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Login failed: {str(e)}",
+        )
 
 @app.get("/")
 def home():
