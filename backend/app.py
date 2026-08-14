@@ -5,6 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 import os
 import shutil
 import json
+import hashlib
 from datetime import datetime, timezone, timedelta
 
 import psycopg
@@ -15,7 +16,7 @@ import jwt
 
 from backend.predict import predict_image
 from backend.predict_audio import predict_audio
-from backend.predict_reid import predict_reid
+from backend.predict_reid import predict_reid, identify_detections
 
 
 # ============================================================
@@ -131,6 +132,16 @@ def safe_filename(filename: str) -> str:
 
 def now_utc():
     return datetime.now(timezone.utc)
+
+
+def calculate_sha256(file_path):
+    sha256 = hashlib.sha256()
+
+    with open(file_path, "rb") as f:
+        for chunk in iter(lambda: f.read(8192), b""):
+            sha256.update(chunk)
+
+    return sha256.hexdigest()
 
 
 def normalise_species_name(name):
@@ -379,7 +390,6 @@ def health():
             "error": str(exc),
         }
 
-
 # ============================================================
 # IMAGE UPLOAD
 # ============================================================
@@ -402,7 +412,6 @@ async def upload_image(file: UploadFile = File(...)):
         shutil.copyfileobj(file.file, buffer)
 
     file_size = os.path.getsize(file_path)
-
     # --------------------------------------------------------
     # Create media_assets record
     # --------------------------------------------------------
@@ -519,7 +528,7 @@ async def upload_image(file: UploadFile = File(...)):
                 inference_run_id = inference["id"]
 
                 # ------------------------------------------------
-                # Store detections
+                # Store YOLO detections
                 # ------------------------------------------------
 
                 for detection in predictions:
@@ -583,10 +592,40 @@ async def upload_image(file: UploadFile = File(...)):
                         ),
                     )
 
+        # ----------------------------------------------------
+        # RE-IDENTIFICATION
+        #
+        # Compare every detected animal with animals already
+        # stored in identified_animals.
+        #
+        # Same animal  -> Already Seen
+        # New animal   -> New Animal
+        # ----------------------------------------------------
+
+        reid_result = identify_detections(
+            image_path=file_path,
+            detections=predictions,
+            threshold=0.90,
+            media_id=media_id,
+            inference_run_id=inference_run_id,
+        )
+
+        # ----------------------------------------------------
+        # Response
+        # ----------------------------------------------------
+
         return {
             "filename": filename,
+
             "total_animals": len(predictions),
-            "detections": predictions,
+
+            "detections": reid_result["detections"],
+
+            "reidentification": {
+                "new_animals": reid_result["new_animals"],
+                "already_seen": reid_result["already_seen"],
+            },
+
             "database": {
                 "media_id": str(media_id),
                 "inference_run_id": str(inference_run_id),
@@ -603,8 +642,6 @@ async def upload_image(file: UploadFile = File(...)):
             status_code=500,
             detail=str(exc),
         )
-
-
 # ============================================================
 # IMAGE MEDIA
 # ============================================================
@@ -740,7 +777,7 @@ async def upload_audio(file: UploadFile = File(...)):
         shutil.copyfileobj(file.file, buffer)
 
     file_size = os.path.getsize(file_path)
-
+    file_hash = calculate_sha256(file_path)
     # --------------------------------------------------------
     # Create media record
     # --------------------------------------------------------
@@ -759,11 +796,13 @@ async def upload_audio(file: UploadFile = File(...)):
                         original_filename,
                         storage_path,
                         mime_type,
-                        file_size_bytes
+                        file_size_bytes,
+                        sha256
                     )
                     VALUES
                     (
                         'audio',
+                        %s,
                         %s,
                         %s,
                         %s,
@@ -776,6 +815,7 @@ async def upload_audio(file: UploadFile = File(...)):
                         file_path,
                         file.content_type,
                         file_size,
+                        file_hash
                     ),
                 ).fetchone()
 
@@ -923,9 +963,101 @@ async def upload_audio(file: UploadFile = File(...)):
                     ),
                 )
 
+                # ------------------------------------------------
+                # CREATE IDENTIFIED ANIMAL
+                #
+                # Exact same audio file -> already seen
+                # New audio file       -> new individual
+                #
+                # Audio cannot perform visual individual
+                # re-identification, so SHA-256 is used to
+                # prevent the exact same recording from
+                # increasing population repeatedly.
+                # ------------------------------------------------
+
+                existing_media = cur.execute(
+                    """
+                    SELECT id
+                    FROM media_assets
+                    WHERE sha256 = %s
+                      AND media_type = 'audio'
+                      AND id <> %s
+                    LIMIT 1
+                    """,
+                    (
+                        file_hash,
+                        media_id,
+                    ),
+                ).fetchone()
+
+                if existing_media:
+
+                    # Same exact audio recording was already uploaded.
+                    # Do NOT create another identified animal.
+
+                    population_created = False
+
+                else:
+
+                    # New audio recording.
+                    # Treat it as a new individual because we currently
+                    # cannot determine whether it is the same animal.
+
+                    species_prefix = (
+                        animal_name
+                        .strip()
+                        .replace(" ", "_")
+                    )
+
+                    next_number = cur.execute(
+                        """
+                        SELECT
+                            COALESCE(
+                                MAX(
+                                    CAST(
+                                        SUBSTRING(
+                                            animal_code
+                                            FROM '[0-9]+$'
+                                        ) AS INTEGER
+                                    )
+                                ),
+                                0
+                            ) + 1 AS next_number
+                        FROM identified_animals
+                        WHERE species_id = %s
+                        """,
+                        (species_id,),
+                    ).fetchone()["next_number"]
+
+                    animal_code = (
+                        f"{species_prefix}_{next_number:03d}"
+                    )
+
+                    cur.execute(
+                        """
+                        INSERT INTO identified_animals
+                        (
+                            animal_code,
+                            species_id
+                        )
+                        VALUES
+                        (
+                            %s,
+                            %s
+                        )
+                        """,
+                        (
+                            animal_code,
+                            species_id,
+                        ),
+                    )
+
+                    population_created = True
+
         return {
             "filename": filename,
             "prediction": prediction,
+            "population_created": population_created,
             "database": {
                 "media_id": str(media_id),
                 "inference_run_id": str(inference_run_id),
@@ -936,7 +1068,6 @@ async def upload_audio(file: UploadFile = File(...)):
                 ),
             },
         }
-
     except Exception as exc:
 
         raise HTTPException(
@@ -944,8 +1075,7 @@ async def upload_audio(file: UploadFile = File(...)):
             detail=str(exc),
         )
 
-
-    # ============================================================
+# ============================================================
 # AUDIO MEDIA
 # ============================================================
 
@@ -1447,6 +1577,7 @@ def population_analytics():
                 # ------------------------------------------------
                 # 1. IMAGE DETECTIONS
                 # ------------------------------------------------
+
                 cur.execute("""
                     SELECT COUNT(*) AS count
                     FROM image_detections d
@@ -1458,8 +1589,9 @@ def population_analytics():
                 image_detections = cur.fetchone()["count"]
 
                 # ------------------------------------------------
-                # 2. AUDIO OBSERVATIONS
+                # 2. AUDIO DETECTIONS
                 # ------------------------------------------------
+
                 cur.execute("""
                     SELECT COUNT(*) AS count
                     FROM audio_predictions ap
@@ -1471,17 +1603,23 @@ def population_analytics():
                 audio_observations = cur.fetchone()["count"]
 
                 # ------------------------------------------------
-                # 3. TOTAL OBSERVATIONS
+                # 3. TOTAL OBSERVATIONS / DETECTED ANIMALS
+                #
+                # Image detections + audio predictions
                 # ------------------------------------------------
+
                 total_observations = (
                     image_detections + audio_observations
                 )
 
                 # ------------------------------------------------
-                # 4. UNIQUE SPECIES FROM IMAGE + AUDIO
+                # 4. UNIQUE SPECIES
+                #
+                # Species detected through image OR audio
                 # ------------------------------------------------
+
                 cur.execute("""
-                    SELECT COUNT(*)
+                    SELECT COUNT(*) AS species_richness
                     FROM (
                         SELECT DISTINCT d.species_id
                         FROM image_detections d
@@ -1498,14 +1636,18 @@ def population_analytics():
                             ON ir.id = ap.inference_run_id
                         WHERE ir.status = 'completed'
                           AND ap.species_id IS NOT NULL
-                    ) detected_species;
+                    ) AS all_species;
                 """)
 
-                species_richness = cur.fetchone()["count"]
+                species_richness = cur.fetchone()["species_richness"]
 
                 # ------------------------------------------------
                 # 5. IDENTIFIED INDIVIDUAL ANIMALS
+                #
+                # These are animals stored in identified_animals
+                # through the re-identification system.
                 # ------------------------------------------------
+
                 cur.execute("""
                     SELECT COUNT(*) AS count
                     FROM identified_animals;
@@ -1515,7 +1657,10 @@ def population_analytics():
 
                 # ------------------------------------------------
                 # 6. COMBINED AVERAGE CONFIDENCE
+                #
+                # Image + audio confidence
                 # ------------------------------------------------
+
                 cur.execute("""
                     SELECT AVG(confidence) AS avg_confidence
                     FROM (
@@ -1537,37 +1682,19 @@ def population_analytics():
 
                 avg_confidence = cur.fetchone()["avg_confidence"]
 
-                # ------------------------------------------------
-                # 7. SPECIES-WISE OBSERVATION COUNTS
-                #    IMAGE + AUDIO
+                                # ------------------------------------------------
+                # 7. SPECIES-WISE POPULATION
+                #    Count unique identified animals per species.
                 # ------------------------------------------------
                 cur.execute("""
                     SELECT
                         s.name,
-                        COUNT(*) AS observations
-                    FROM (
-                        SELECT
-                            d.species_id
-                        FROM image_detections d
-                        JOIN inference_runs ir
-                            ON ir.id = d.inference_run_id
-                        WHERE ir.status = 'completed'
-                          AND d.species_id IS NOT NULL
-
-                        UNION ALL
-
-                        SELECT
-                            ap.species_id
-                        FROM audio_predictions ap
-                        JOIN inference_runs ir
-                            ON ir.id = ap.inference_run_id
-                        WHERE ir.status = 'completed'
-                          AND ap.species_id IS NOT NULL
-                    ) observations
+                        COUNT(ia.id) AS population
+                    FROM identified_animals ia
                     JOIN species s
-                        ON s.id = observations.species_id
+                        ON s.id = ia.species_id
                     GROUP BY s.name
-                    ORDER BY observations DESC;
+                    ORDER BY population DESC, s.name;
                 """)
 
                 species_rows = cur.fetchall()
@@ -1575,64 +1702,56 @@ def population_analytics():
                 richness = [
                     {
                         "site": row["name"],
-                        "richness": row["observations"],
+                        "richness": row["population"],
                         "endemic": 0,
                     }
                     for row in species_rows
                 ]
 
                 # ------------------------------------------------
-                # 8. MONTHLY OBSERVATION TREND
-                #    IMAGE + AUDIO
+                # 8. DETECTION ACTIVITY OVER TIME
+                #
+                # Image + audio detections per day
                 # ------------------------------------------------
+
                 cur.execute("""
                     SELECT
-                        TO_CHAR(
-                            COALESCE(ir.completed_at, ir.started_at),
-                            'Mon YY'
-                        ) AS month,
-
                         DATE_TRUNC(
-                            'month',
+                            'day',
                             COALESCE(ir.completed_at, ir.started_at)
-                        ) AS month_date,
-
-                        s.name AS species,
-                        COUNT(*) AS observations
-
-                    FROM (
-                        SELECT
-                            d.inference_run_id,
-                            d.species_id
-                        FROM image_detections d
-
-                        UNION ALL
-
-                        SELECT
-                            ap.inference_run_id,
-                            ap.species_id
-                        FROM audio_predictions ap
-                    ) observations
-
+                        ) AS detection_date,
+                        'image' AS source,
+                        COUNT(*) AS detections
+                    FROM image_detections d
                     JOIN inference_runs ir
-                        ON ir.id = observations.inference_run_id
-
-                    JOIN species s
-                        ON s.id = observations.species_id
-
+                        ON ir.id = d.inference_run_id
                     WHERE ir.status = 'completed'
-                      AND observations.species_id IS NOT NULL
                       AND COALESCE(
                             ir.completed_at,
                             ir.started_at
-                          ) >= CURRENT_DATE - INTERVAL '12 months'
+                          ) >= CURRENT_DATE - INTERVAL '30 days'
+                    GROUP BY detection_date
 
-                    GROUP BY
-                        month,
-                        month_date,
-                        s.name
+                    UNION ALL
 
-                    ORDER BY month_date;
+                    SELECT
+                        DATE_TRUNC(
+                            'day',
+                            COALESCE(ir.completed_at, ir.started_at)
+                        ) AS detection_date,
+                        'audio' AS source,
+                        COUNT(*) AS detections
+                    FROM audio_predictions ap
+                    JOIN inference_runs ir
+                        ON ir.id = ap.inference_run_id
+                    WHERE ir.status = 'completed'
+                      AND COALESCE(
+                            ir.completed_at,
+                            ir.started_at
+                          ) >= CURRENT_DATE - INTERVAL '30 days'
+                    GROUP BY detection_date
+
+                    ORDER BY detection_date;
                 """)
 
                 trend_rows = cur.fetchall()
@@ -1641,79 +1760,73 @@ def population_analytics():
 
                 for row in trend_rows:
 
-                    month = row["month"]
+                    detection_date = row["detection_date"]
+                    date_key = detection_date.strftime("%b %d")
 
-                    if month not in trend_map:
-                        trend_map[month] = {
-                            "month": month,
-                            "month_date": row["month_date"],
+                    if date_key not in trend_map:
+                        trend_map[date_key] = {
+                            "date": date_key,
+                            "imageDetections": 0,
+                            "audioDetections": 0,
                         }
 
-                    species_name = row["species"].lower()
-
-                    if "elephant" in species_name:
-                        key = "elephant"
-                    elif "gaur" in species_name:
-                        key = "gaur"
-                    elif "tahr" in species_name:
-                        key = "tahr"
-                    elif "tiger" in species_name:
-                        key = "tiger"
+                    if row["source"] == "image":
+                        trend_map[date_key]["imageDetections"] = (
+                            row["detections"]
+                        )
                     else:
-                        continue
+                        trend_map[date_key]["audioDetections"] = (
+                            row["detections"]
+                        )
 
-                    trend_map[month][key] = (
-                        trend_map[month].get(key, 0)
-                        + row["observations"]
+                trend = list(trend_map.values())
+
+                for item in trend:
+                    item["totalDetections"] = (
+                        item["imageDetections"]
+                        + item["audioDetections"]
                     )
 
-                trend = []
-
-                for item in sorted(
-                    trend_map.values(),
-                    key=lambda x: x["month_date"]
-                ):
-                    item.pop("month_date", None)
-
-                    item.setdefault("elephant", 0)
-                    item.setdefault("gaur", 0)
-                    item.setdefault("tahr", 0)
-                    item.setdefault("tiger", 0)
-
-                    trend.append(item)
 
                 # ------------------------------------------------
-                # 9. CURRENTLY NO REAL LOCATION DATA
+                # 9. NO REAL LOCATION DATA YET
                 # ------------------------------------------------
+
                 markers = []
 
                 # ------------------------------------------------
-                # 10. CURRENTLY NO REAL CORRIDOR DATA
+                # 10. NO REAL CORRIDOR DATA YET
                 # ------------------------------------------------
+
                 corridors = []
 
                 # ------------------------------------------------
                 # RESPONSE
                 # ------------------------------------------------
+
                 return {
                     "summary": {
                         "totalObservations": total_observations,
-                        "imageDetections": image_detections,
-                        "audioObservations": audio_observations,
                         "speciesRichness": species_richness,
-                        "identifiedIndividuals": identified_individuals,
+                        "population": identified_individuals,
                         "averageConfidence": round(
-                            float(avg_confidence) * 100, 2
-                        ) if avg_confidence is not None else 0,
+                            float(avg_confidence) * 100,
+                            2,
+                        ),
+                        "growthRate": None,
+                        "densityPerSqKm": None,
+                        "surveyedArea": None,
                     },
 
                     "trend": trend,
                     "richness": richness,
-                    "markers": markers,
-                    "corridors": corridors,
+                    "markers": [],
+
+                    "corridors": [],
                 }
 
     except Exception as e:
+
         raise HTTPException(
             status_code=500,
             detail=f"Population analytics failed: {str(e)}",

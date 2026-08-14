@@ -16,11 +16,10 @@ import PopulationAnalytics from './pages/PopulationAnalytics';
 import Biodiversity from './pages/Biodiversity';
 import EcosystemHealth from './pages/EcosystemHealth';
 import Conservation from './pages/Conservation';
-import Alerts from './pages/Alerts';
 import Reports from './pages/Reports';
 import Admin from './pages/Admin';
 import NotFound from './pages/NotFound';
-
+import Recommendations from './pages/Recommendations';
 /** Sends signed-in users away from the auth screens. */
 function PublicOnly({ children }) {
   const { isAuthenticated, booting } = useAuth();
@@ -51,7 +50,7 @@ export default function App() {
         <Route path="biodiversity" element={<Biodiversity />} />
         <Route path="ecosystem-health" element={<EcosystemHealth />} />
         <Route path="conservation" element={<Conservation />} />
-        <Route path="alerts" element={<Alerts />} />
+        <Route path="recommendations" element={<Recommendations />} />
         <Route path="reports" element={<Reports />} />
         <Route
           path="admin"

@@ -24,13 +24,12 @@ const NAV = [
       { to: '/population', label: 'Population analytics', icon: TrendingUp },
       { to: '/biodiversity', label: 'Biodiversity & habitat', icon: Leaf },
       { to: '/ecosystem-health', label: 'Ecosystem health', icon: Activity },
-      { to: '/conservation', label: 'Recommendations', icon: Lightbulb, roles: [ROLES.CONSERVATION, ROLES.FOREST, ROLES.ADMIN, ROLES.RESEARCHER] },
+      { to: '/recommendations', label: 'Recommendations', icon: Lightbulb, roles: [ROLES.CONSERVATION, ROLES.FOREST, ROLES.ADMIN, ROLES.RESEARCHER] },
     ],
   },
   {
     section: 'Operations',
     items: [
-      { to: '/alerts', label: 'Alerts', icon: Bell },
       { to: '/reports', label: 'Reports', icon: FileText },
       { to: '/admin', label: 'Administration', icon: Users, roles: [ROLES.ADMIN] },
     ],

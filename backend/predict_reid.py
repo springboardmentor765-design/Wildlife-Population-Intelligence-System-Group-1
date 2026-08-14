@@ -185,8 +185,12 @@ def identify_animal(
     species,
     embedding,
     threshold=0.90,
-    media_id=None
+    media_id=None,
+    excluded_animal_ids=None
 ):
+
+    if excluded_animal_ids is None:
+        excluded_animal_ids = set()
 
     species_id = get_species_id(
         species
@@ -202,10 +206,8 @@ def identify_animal(
             "species_id": None
         }
 
-
     best_animal_id = None
     best_similarity = -1
-
 
     # -----------------------------------------------------
     # Load existing animals of same species
@@ -230,7 +232,6 @@ def identify_animal(
 
             rows = cur.fetchall()
 
-
     # -----------------------------------------------------
     # Compare embeddings
     # -----------------------------------------------------
@@ -238,6 +239,12 @@ def identify_animal(
     for row in rows:
 
         db_id = row[0]
+
+        # IMPORTANT:
+        # Do not allow an animal already assigned to another
+        # detection in this SAME image to be reused.
+        if str(db_id) in excluded_animal_ids:
+            continue
 
         animal_code = row[1]
 
@@ -259,7 +266,6 @@ def identify_animal(
                 animal_code
             )
 
-
     # =====================================================
     # EXISTING ANIMAL
     # =====================================================
@@ -270,7 +276,6 @@ def identify_animal(
     ):
 
         db_id, animal_code = best_animal_id
-
 
         with get_connection() as conn:
 
@@ -285,7 +290,6 @@ def identify_animal(
                     (db_id,)
                 )
 
-
         return {
             "animal_id": animal_code,
             "database_id": str(db_id),
@@ -294,7 +298,6 @@ def identify_animal(
             "status": "Already Seen",
             "species_id": species_id
         }
-
 
     # =====================================================
     # NEW ANIMAL
@@ -308,7 +311,6 @@ def identify_animal(
     embedding_bytes = embedding_to_bytes(
         embedding.flatten()
     )
-
 
     with get_connection() as conn:
 
@@ -344,7 +346,6 @@ def identify_animal(
 
             db_id = cur.fetchone()[0]
 
-
     return {
         "animal_id": animal_code,
         "database_id": str(db_id),
@@ -353,7 +354,6 @@ def identify_animal(
         "status": "New Animal",
         "species_id": species_id
     }
-
 
 # =========================================================
 # IDENTIFY YOLO DETECTIONS
@@ -379,7 +379,9 @@ def identify_detections(
 
 
     results = []
-
+    # Animals already assigned to a detection
+    # in this same image.
+    used_animal_ids = set()
 
     # =====================================================
     # PROCESS EACH YOLO DETECTION
@@ -493,8 +495,17 @@ def identify_detections(
                 species,
                 embedding,
                 threshold,
-                media_id
+                media_id,
+                excluded_animal_ids=used_animal_ids
             )
+
+            # Do not allow the same individual to be
+            # assigned to another detection in this image.
+
+            if reid.get("database_id"):
+                used_animal_ids.add(
+                    str(reid["database_id"])
+                )
 
 
             # -------------------------------------------------
