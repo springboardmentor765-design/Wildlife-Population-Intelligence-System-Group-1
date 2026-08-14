@@ -756,6 +756,131 @@ def list_images():
         )
 
 # ============================================================
+# SPECIES EXPLORER
+# ============================================================
+
+@app.get("/species")
+def list_species(q: str = ""):
+    try:
+        with get_connection() as conn:
+            with conn.cursor() as cur:
+
+                rows = cur.execute(
+                    """
+                    SELECT
+                        s.id,
+                        s.name,
+
+                        COUNT(DISTINCT ia.id) AS population,
+
+                        (
+                            SELECT COUNT(*)
+                            FROM image_detections d
+                            JOIN inference_runs ir
+                                ON ir.id = d.inference_run_id
+                            WHERE d.species_id = s.id
+                              AND ir.status = 'completed'
+                        )
+                        +
+                        (
+                            SELECT COUNT(*)
+                            FROM audio_predictions ap
+                            JOIN inference_runs ir
+                                ON ir.id = ap.inference_run_id
+                            WHERE ap.species_id = s.id
+                              AND ir.status = 'completed'
+                        ) AS observations,
+
+                        (
+                            SELECT AVG(x.confidence)
+                            FROM (
+                                SELECT d.confidence
+                                FROM image_detections d
+                                JOIN inference_runs ir
+                                    ON ir.id = d.inference_run_id
+                                WHERE d.species_id = s.id
+                                  AND ir.status = 'completed'
+
+                                UNION ALL
+
+                                SELECT ap.confidence
+                                FROM audio_predictions ap
+                                JOIN inference_runs ir
+                                    ON ir.id = ap.inference_run_id
+                                WHERE ap.species_id = s.id
+                                  AND ir.status = 'completed'
+                            ) x
+                        ) AS average_confidence,
+
+                        (
+                            SELECT
+                                '/media/images/' ||
+                                ma.original_filename
+                            FROM image_detections d
+                            JOIN inference_runs ir
+                                ON ir.id = d.inference_run_id
+                            JOIN media_assets ma
+                                ON ma.id = ir.media_id
+                            WHERE d.species_id = s.id
+                              AND ir.status = 'completed'
+                              AND ma.media_type = 'image'
+                            ORDER BY ma.created_at DESC
+                            LIMIT 1
+                        ) AS image_url
+
+                    FROM species s
+
+                    LEFT JOIN identified_animals ia
+                        ON ia.species_id = s.id
+
+                    WHERE
+                        %s = ''
+                        OR LOWER(s.name) LIKE LOWER('%%' || %s || '%%')
+
+                    GROUP BY
+                        s.id,
+                        s.name
+
+                    HAVING
+                        COUNT(DISTINCT ia.id) > 0
+
+                    ORDER BY
+                        observations DESC,
+                        s.name
+                    """,
+                    (q, q),
+                ).fetchall()
+
+        return [
+            {
+                "id": str(row["id"]),
+                "common": row["name"],
+                "population": row["population"],
+                "observations": row["observations"],
+                "averageConfidence": (
+                    round(
+                        float(row["average_confidence"]) * 100,
+                        2,
+                    )
+                    if row["average_confidence"] is not None
+                    else 0
+                ),
+                "imageUrl": (
+                    f"http://localhost:8000{row['image_url']}"
+                    if row["image_url"]
+                    else None
+                ),
+            }
+            for row in rows
+        ]
+
+    except Exception as exc:
+        raise HTTPException(
+            status_code=500,
+            detail=str(exc),
+        )
+
+# ============================================================
 # AUDIO UPLOAD
 # ============================================================
 

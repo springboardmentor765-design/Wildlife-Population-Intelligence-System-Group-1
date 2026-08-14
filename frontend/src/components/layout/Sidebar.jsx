@@ -1,7 +1,7 @@
 import { NavLink } from 'react-router-dom';
 import {
-  LayoutDashboard, MapPin, Camera, AudioLines, Bird, TrendingUp, Leaf,
-  Activity, Lightbulb, Bell, FileText, Users, X,
+  LayoutDashboard, Camera, AudioLines, Bird, TrendingUp, Leaf,
+Lightbulb, FileText, Users, X,
 } from 'lucide-react';
 import { clsx } from '../../utils/cn';
 import { ROLES } from '../../utils/constants';
@@ -12,7 +12,6 @@ const NAV = [
   {
     section: 'Field data',
     items: [
-      { to: '/sites', label: 'Monitoring sites', icon: MapPin },
       { to: '/camera-traps', label: 'Camera trap images', icon: Camera },
       { to: '/bioacoustics', label: 'Bioacoustics', icon: AudioLines },
       { to: '/species', label: 'Species explorer', icon: Bird },
@@ -22,8 +21,6 @@ const NAV = [
     section: 'Intelligence',
     items: [
       { to: '/population', label: 'Population analytics', icon: TrendingUp },
-      { to: '/biodiversity', label: 'Biodiversity & habitat', icon: Leaf },
-      { to: '/ecosystem-health', label: 'Ecosystem health', icon: Activity },
       { to: '/recommendations', label: 'Recommendations', icon: Lightbulb, roles: [ROLES.CONSERVATION, ROLES.FOREST, ROLES.ADMIN, ROLES.RESEARCHER] },
     ],
   },
