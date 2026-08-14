@@ -50,17 +50,17 @@ export default function PopulationAnalytics() {
       {data && !loading && !error && (
         <div className="space-y-6">
           <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-            <StatTile label="Individuals estimated" value={data.summary.totalPopulation} icon={Users} delta={data.summary.growthRate} />
-            <StatTile label="Species richness" value={data.summary.speciesRichness} icon={Sprout} delta={5.6} />
-            <StatTile label="Mean density" value={data.summary.densityPerSqKm} unit="/ km²" icon={Compass} tone="clay" />
-            <StatTile label="Area surveyed" value={data.summary.surveyedArea} unit="km²" icon={Ruler} tone="bark" />
+            <StatTile label="Total observations" value={data.summary.totalObservations} icon={Users} />
+            <StatTile label="Species detected" value={data.summary.speciesRichness} icon={Sprout} />
+            <StatTile label="Identified animals" value={data.summary.identifiedIndividuals} icon={Compass} tone="clay" />
+            <StatTile label="Avg. confidence" value={`${data.summary.averageConfidence}%`} icon={Ruler} tone="bark" />
           </div>
 
           <Card>
             <CardHeader
-              eyebrow="Monthly estimates"
-              title="Population trend over time"
-              description="Estimates combine camera trap capture rates with transect counts."
+              eyebrow="Monthly detections"
+              title="Detection trend over time"
+              description="Confirmed wildlife detections recorded by the system."
             />
             <CardBody>
               <ResponsiveContainer width="100%" height={340}>
@@ -81,7 +81,7 @@ export default function PopulationAnalytics() {
 
           <div className="grid gap-6 lg:grid-cols-2">
             <Card>
-              <CardHeader eyebrow="By site" title="Species richness" description="Distinct species confirmed, and how many are Western Ghats endemics." />
+              <CardHeader eyebrow="By species" title="Detection counts" description="Number of confirmed detections recorded for each species." />
               <CardBody>
                 <ResponsiveContainer width="100%" height={300}>
                   <BarChart data={data.richness} margin={{ top: 8, right: 8, bottom: 0, left: -20 }}>
@@ -90,8 +90,7 @@ export default function PopulationAnalytics() {
                     <YAxis tick={{ fontSize: 11, fill: '#5B6560' }} tickLine={false} axisLine={false} />
                     <Tooltip cursor={{ fill: '#F3EFE7' }} contentStyle={{ borderRadius: 12, border: '1px solid #E7E1D5', fontSize: 12 }} />
                     <Legend wrapperStyle={{ fontSize: 12, paddingTop: 8 }} />
-                    <Bar dataKey="richness" name="Species" fill="#2C7A5B" radius={[6, 6, 0, 0]} maxBarSize={40} />
-                    <Bar dataKey="endemic" name="Endemic" fill="#B4763A" radius={[6, 6, 0, 0]} maxBarSize={40} />
+                    <Bar dataKey="richness" name="Detections" fill="#2C7A5B" radius={[6, 6, 0, 0]} maxBarSize={40} />
                   </BarChart>
                 </ResponsiveContainer>
               </CardBody>

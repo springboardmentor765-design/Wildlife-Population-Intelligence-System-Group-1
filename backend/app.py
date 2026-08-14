@@ -1365,7 +1365,7 @@ def dashboard(
                     "tiles": [
                         {
                             "key": "population",
-                            "label": "Individual animals",
+                            "label": "Identified animals",
                             "value": population_count,
                         },
                         {
@@ -1422,4 +1422,299 @@ def dashboard(
         raise HTTPException(
             status_code=500,
             detail=f"Dashboard query failed: {exc}",
+        )
+
+
+# ============================================================
+# POPULATION / OBSERVATION ANALYTICS
+# ============================================================
+
+@app.get("/analytics/population")
+def population_analytics():
+    """
+    Return wildlife observation analytics calculated from
+    real PostgreSQL image and audio data.
+
+    Note:
+    These are observation/detection metrics,
+    not scientific population estimates.
+    """
+
+    try:
+        with get_connection() as conn:
+            with conn.cursor() as cur:
+
+                # ------------------------------------------------
+                # 1. IMAGE DETECTIONS
+                # ------------------------------------------------
+                cur.execute("""
+                    SELECT COUNT(*) AS count
+                    FROM image_detections d
+                    JOIN inference_runs ir
+                        ON ir.id = d.inference_run_id
+                    WHERE ir.status = 'completed';
+                """)
+
+                image_detections = cur.fetchone()["count"]
+
+                # ------------------------------------------------
+                # 2. AUDIO OBSERVATIONS
+                # ------------------------------------------------
+                cur.execute("""
+                    SELECT COUNT(*) AS count
+                    FROM audio_predictions ap
+                    JOIN inference_runs ir
+                        ON ir.id = ap.inference_run_id
+                    WHERE ir.status = 'completed';
+                """)
+
+                audio_observations = cur.fetchone()["count"]
+
+                # ------------------------------------------------
+                # 3. TOTAL OBSERVATIONS
+                # ------------------------------------------------
+                total_observations = (
+                    image_detections + audio_observations
+                )
+
+                # ------------------------------------------------
+                # 4. UNIQUE SPECIES FROM IMAGE + AUDIO
+                # ------------------------------------------------
+                cur.execute("""
+                    SELECT COUNT(*)
+                    FROM (
+                        SELECT DISTINCT d.species_id
+                        FROM image_detections d
+                        JOIN inference_runs ir
+                            ON ir.id = d.inference_run_id
+                        WHERE ir.status = 'completed'
+                          AND d.species_id IS NOT NULL
+
+                        UNION
+
+                        SELECT DISTINCT ap.species_id
+                        FROM audio_predictions ap
+                        JOIN inference_runs ir
+                            ON ir.id = ap.inference_run_id
+                        WHERE ir.status = 'completed'
+                          AND ap.species_id IS NOT NULL
+                    ) detected_species;
+                """)
+
+                species_richness = cur.fetchone()["count"]
+
+                # ------------------------------------------------
+                # 5. IDENTIFIED INDIVIDUAL ANIMALS
+                # ------------------------------------------------
+                cur.execute("""
+                    SELECT COUNT(*) AS count
+                    FROM identified_animals;
+                """)
+
+                identified_individuals = cur.fetchone()["count"]
+
+                # ------------------------------------------------
+                # 6. COMBINED AVERAGE CONFIDENCE
+                # ------------------------------------------------
+                cur.execute("""
+                    SELECT AVG(confidence) AS avg_confidence
+                    FROM (
+                        SELECT d.confidence
+                        FROM image_detections d
+                        JOIN inference_runs ir
+                            ON ir.id = d.inference_run_id
+                        WHERE ir.status = 'completed'
+
+                        UNION ALL
+
+                        SELECT ap.confidence
+                        FROM audio_predictions ap
+                        JOIN inference_runs ir
+                            ON ir.id = ap.inference_run_id
+                        WHERE ir.status = 'completed'
+                    ) confidence_values;
+                """)
+
+                avg_confidence = cur.fetchone()["avg_confidence"]
+
+                # ------------------------------------------------
+                # 7. SPECIES-WISE OBSERVATION COUNTS
+                #    IMAGE + AUDIO
+                # ------------------------------------------------
+                cur.execute("""
+                    SELECT
+                        s.name,
+                        COUNT(*) AS observations
+                    FROM (
+                        SELECT
+                            d.species_id
+                        FROM image_detections d
+                        JOIN inference_runs ir
+                            ON ir.id = d.inference_run_id
+                        WHERE ir.status = 'completed'
+                          AND d.species_id IS NOT NULL
+
+                        UNION ALL
+
+                        SELECT
+                            ap.species_id
+                        FROM audio_predictions ap
+                        JOIN inference_runs ir
+                            ON ir.id = ap.inference_run_id
+                        WHERE ir.status = 'completed'
+                          AND ap.species_id IS NOT NULL
+                    ) observations
+                    JOIN species s
+                        ON s.id = observations.species_id
+                    GROUP BY s.name
+                    ORDER BY observations DESC;
+                """)
+
+                species_rows = cur.fetchall()
+
+                richness = [
+                    {
+                        "site": row["name"],
+                        "richness": row["observations"],
+                        "endemic": 0,
+                    }
+                    for row in species_rows
+                ]
+
+                # ------------------------------------------------
+                # 8. MONTHLY OBSERVATION TREND
+                #    IMAGE + AUDIO
+                # ------------------------------------------------
+                cur.execute("""
+                    SELECT
+                        TO_CHAR(
+                            COALESCE(ir.completed_at, ir.started_at),
+                            'Mon YY'
+                        ) AS month,
+
+                        DATE_TRUNC(
+                            'month',
+                            COALESCE(ir.completed_at, ir.started_at)
+                        ) AS month_date,
+
+                        s.name AS species,
+                        COUNT(*) AS observations
+
+                    FROM (
+                        SELECT
+                            d.inference_run_id,
+                            d.species_id
+                        FROM image_detections d
+
+                        UNION ALL
+
+                        SELECT
+                            ap.inference_run_id,
+                            ap.species_id
+                        FROM audio_predictions ap
+                    ) observations
+
+                    JOIN inference_runs ir
+                        ON ir.id = observations.inference_run_id
+
+                    JOIN species s
+                        ON s.id = observations.species_id
+
+                    WHERE ir.status = 'completed'
+                      AND observations.species_id IS NOT NULL
+                      AND COALESCE(
+                            ir.completed_at,
+                            ir.started_at
+                          ) >= CURRENT_DATE - INTERVAL '12 months'
+
+                    GROUP BY
+                        month,
+                        month_date,
+                        s.name
+
+                    ORDER BY month_date;
+                """)
+
+                trend_rows = cur.fetchall()
+
+                trend_map = {}
+
+                for row in trend_rows:
+
+                    month = row["month"]
+
+                    if month not in trend_map:
+                        trend_map[month] = {
+                            "month": month,
+                            "month_date": row["month_date"],
+                        }
+
+                    species_name = row["species"].lower()
+
+                    if "elephant" in species_name:
+                        key = "elephant"
+                    elif "gaur" in species_name:
+                        key = "gaur"
+                    elif "tahr" in species_name:
+                        key = "tahr"
+                    elif "tiger" in species_name:
+                        key = "tiger"
+                    else:
+                        continue
+
+                    trend_map[month][key] = (
+                        trend_map[month].get(key, 0)
+                        + row["observations"]
+                    )
+
+                trend = []
+
+                for item in sorted(
+                    trend_map.values(),
+                    key=lambda x: x["month_date"]
+                ):
+                    item.pop("month_date", None)
+
+                    item.setdefault("elephant", 0)
+                    item.setdefault("gaur", 0)
+                    item.setdefault("tahr", 0)
+                    item.setdefault("tiger", 0)
+
+                    trend.append(item)
+
+                # ------------------------------------------------
+                # 9. CURRENTLY NO REAL LOCATION DATA
+                # ------------------------------------------------
+                markers = []
+
+                # ------------------------------------------------
+                # 10. CURRENTLY NO REAL CORRIDOR DATA
+                # ------------------------------------------------
+                corridors = []
+
+                # ------------------------------------------------
+                # RESPONSE
+                # ------------------------------------------------
+                return {
+                    "summary": {
+                        "totalObservations": total_observations,
+                        "imageDetections": image_detections,
+                        "audioObservations": audio_observations,
+                        "speciesRichness": species_richness,
+                        "identifiedIndividuals": identified_individuals,
+                        "averageConfidence": round(
+                            float(avg_confidence) * 100, 2
+                        ) if avg_confidence is not None else 0,
+                    },
+
+                    "trend": trend,
+                    "richness": richness,
+                    "markers": markers,
+                    "corridors": corridors,
+                }
+
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Population analytics failed: {str(e)}",
         )
