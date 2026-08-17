@@ -11,12 +11,6 @@ const download = (blob, filename) => {
   URL.revokeObjectURL(url);
 };
 
-const filenameFromDisposition = (disposition, fallback) => {
-  if (!disposition) return fallback;
-  const match = /filename\*?=(?:UTF-8'')?"?([^";]+)"?/i.exec(disposition);
-  return match ? match[1] : fallback;
-};
-
 export const reportService = {
   async catalogue() {
     if (USE_MOCK) return respond({ types: reportTypes, recent: recentReports }, 600);
@@ -37,33 +31,8 @@ export const reportService = {
       download(new Blob([body], { type: 'text/plain' }), `wpis-report.${format}.txt`);
       return { ok: true, mock: true };
     }
-
-    const { data } = await api.post('/reports/generate', {
-      type: filters.type || 'survey',
-      site_id: filters.site || null,
-      from: filters.from || null,
-      to: filters.to || null,
-      species: filters.species || null,
-      format,
-    });
-
-    await reportService.download(data.report.id, data.report.name);
-    return data;
-  },
-
-  async download(id, name = 'wpis-report') {
-    if (USE_MOCK) {
-      const body = `Wildlife Population Intelligence System\n\nMock report ${id}.`;
-      download(new Blob([body], { type: 'text/plain' }), `wpis-report-${id}.txt`);
-      return { ok: true, mock: true };
-    }
-
-    const res = await api.get(`/reports/${id}/download`, { responseType: 'blob' });
-    const filename = filenameFromDisposition(
-      res.headers['content-disposition'],
-      `${name.replace(/[^a-z0-9]+/gi, '-').toLowerCase()}.pdf`
-    );
-    download(res.data, filename);
+    const res = await api.get(`/reports/export/${format}`, { params: filters, responseType: 'blob' });
+    download(res.data, `wpis-report.${format}`);
     return { ok: true };
   },
 };

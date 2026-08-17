@@ -1,17 +1,7 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { authService } from '../services/authService';
-import { ROLES } from '../utils/constants';
 
 const AuthContext = createContext(null);
-
-/*
- * Maps roles issued by older builds / mock accounts onto the
- * canonical backend role values used today.
- */
-const LEGACY_ROLES = {
-  admin: ROLES.ADMIN,
-  forest_officer: ROLES.FOREST,
-};
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
@@ -20,12 +10,7 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     const token = authService.getToken();
     const stored = authService.getStoredUser();
-    if (token && stored) {
-      setUser({
-        ...stored,
-        role: LEGACY_ROLES[stored.role] ?? stored.role,
-      });
-    }
+    if (token && stored) setUser(stored);
     setBooting(false);
   }, []);
 

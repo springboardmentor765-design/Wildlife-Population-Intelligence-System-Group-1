@@ -111,6 +111,7 @@ def get_species_id(species):
                 SELECT id
                 FROM species
                 WHERE LOWER(name) = LOWER(%s)
+                AND image_class_id IS NOT NULL
                 LIMIT 1;
                 """,
                 (species,)
@@ -513,7 +514,7 @@ def identify_detections(
 
             if (
                 inference_run_id
-                and reid.get("database_id")
+                and reid["database_id"]
             ):
 
                 status = (
