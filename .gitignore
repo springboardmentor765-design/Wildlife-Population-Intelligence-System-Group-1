@@ -1,0 +1,44 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.env
+*.db
+*.sqlite3
+
+# Node
+node_modules/
+dist/
+.vite/
+
+# Uploads
+backend/uploads/images/*
+backend/uploads/audio/*
+!backend/uploads/images/.gitkeep
+!backend/uploads/audio/.gitkeep
+
+# Trained weights (keep labels + readme)
+backend/ml_models/image/*
+backend/ml_models/audio/*
+!backend/ml_models/image/labels.json
+!backend/ml_models/image/README.md
+!backend/ml_models/image/.gitkeep
+!backend/ml_models/audio/labels.json
+!backend/ml_models/audio/README.md
+!backend/ml_models/audio/.gitkeep
+*.pt
+*.pth
+*.onnx
+*.h5
+*.keras
+*.tflite
+*.weights
+
+# OS / IDE
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.log
