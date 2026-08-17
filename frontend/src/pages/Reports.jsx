@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Download, FileSpreadsheet, FileText } from 'lucide-react';
+import { Download, FileSpreadsheet, FileText, Loader2 } from 'lucide-react';
 import { PageHeader } from '../components/layout/PageHeader';
 import { Card, CardBody, CardHeader } from '../components/ui/Card';
 import { Table } from '../components/ui/Table';
@@ -12,21 +12,42 @@ import { useAsync } from '../hooks/useAsync';
 import { reportService } from '../services/reportService';
 import { mockSites } from '../mock/sites';
 import { formatDateTime } from '../utils/format';
-import { clsx } from '../utils/cn';
 
 export default function Reports() {
   const { data, loading, error, reload } = useAsync(() => reportService.catalogue(), []);
   const [filters, setFilters] = useState({ type: 'survey', site: '', from: '', to: '', species: '' });
   const [busy, setBusy] = useState(null);
+  const [genError, setGenError] = useState(null);
+  const [genSuccess, setGenSuccess] = useState(null);
+  const [downloading, setDownloading] = useState(null);
+  const [downloadError, setDownloadError] = useState(null);
 
   const set = (k) => (e) => setFilters({ ...filters, [k]: e.target.value });
 
   const run = async (format) => {
     setBusy(format);
+    setGenError(null);
+    setGenSuccess(null);
     try {
       await reportService.export(format, filters);
+      setGenSuccess(`Report generated. Download it from the table, or export again.`);
+      reload();
+    } catch (err) {
+      setGenError(err.message || 'Report generation failed.');
     } finally {
       setBusy(null);
+    }
+  };
+
+  const download = async (report) => {
+    setDownloading(report.id);
+    setDownloadError(null);
+    try {
+      await reportService.download(report.id, report.name);
+    } catch (err) {
+      setDownloadError(err.message || 'Download failed.');
+    } finally {
+      setDownloading(null);
     }
   };
 
@@ -76,22 +97,30 @@ export default function Reports() {
               </Field>
 
               <div className="flex flex-col gap-2.5 border-t border-sand-200 pt-4 sm:flex-row">
-                <Button icon={FileText} loading={busy === 'pdf'} onClick={() => run('pdf')} className="flex-1">
+                <Button icon={FileText} loading={busy === 'pdf'} disabled={Boolean(busy)} onClick={() => run('pdf')} className="flex-1">
                   Export PDF
                 </Button>
-                <Button variant="earth" icon={FileSpreadsheet} loading={busy === 'xlsx'} onClick={() => run('xlsx')} className="flex-1">
+                <Button variant="earth" icon={FileSpreadsheet} loading={busy === 'xlsx'} disabled={Boolean(busy)} onClick={() => run('xlsx')} className="flex-1">
                   Export Excel
                 </Button>
               </div>
-              <p className="text-[12px] text-ink-500">
-                Exports run against the live API once VITE_API_URL is connected. In mock mode a
-                placeholder file is downloaded.
-              </p>
+
+              {busy && (
+                <p className="flex items-center gap-2 text-[12px] text-ink-500">
+                  <Loader2 size={14} className="animate-spin" />
+                  Generating {data.types.find((t) => t.id === filters.type)?.label ?? 'report'}… this can take a few seconds.
+                </p>
+              )}
+              {genError && <p className="text-[12px] text-red-600">{genError}</p>}
+              {genSuccess && <p className="text-[12px] text-moss-600">{genSuccess}</p>}
             </CardBody>
           </Card>
 
           <Card>
             <CardHeader eyebrow="History" title="Recently generated" description="Reports stay available for 90 days." />
+            {downloadError && (
+              <p className="px-4 pb-2 text-[12px] text-red-600">{downloadError}</p>
+            )}
             {data.recent.length === 0 ? (
               <EmptyState
                 icon={FileText}
@@ -122,8 +151,16 @@ export default function Reports() {
                   },
                   {
                     key: 'actions', header: '', align: 'right',
-                    render: () => (
-                      <Button size="sm" variant="ghost" icon={Download}>Download</Button>
+                    render: (r) => (
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        icon={Download}
+                        loading={downloading === r.id}
+                        onClick={() => download(r)}
+                      >
+                        Download
+                      </Button>
                     ),
                   },
                 ]}

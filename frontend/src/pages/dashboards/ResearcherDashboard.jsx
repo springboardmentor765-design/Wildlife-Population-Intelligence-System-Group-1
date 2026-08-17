@@ -1,94 +1,204 @@
 import { Link } from 'react-router-dom';
-import { Bird, Camera, Gauge, ListChecks, ArrowRight } from 'lucide-react';
 import {
-  LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
-} from 'recharts';
-import { Card, CardBody, CardHeader } from '../../components/ui/Card';
+  Bird,
+  Camera,
+  Gauge,
+  ListChecks,
+  Users,
+  CheckCircle,
+  Mic,
+  ArrowRight,
+} from 'lucide-react';
+
+import { Card, CardHeader } from '../../components/ui/Card';
 import { StatTile } from '../../components/ui/StatTile';
-import { IucnBadge, Badge } from '../../components/ui/Badge';
 import { Table } from '../../components/ui/Table';
-import { populationTrend } from '../../mock/analytics';
 import { timeAgo } from '../../utils/format';
 
-const ICONS = { observations: Camera, species: Bird, pending: ListChecks, accuracy: Gauge };
+const ICONS = {
+  population: Users,
+  observations: Camera,
+  species: Bird,
+  pending: ListChecks,
+  accuracy: Gauge,
+};
 
 export function ResearcherDashboard({ data }) {
   return (
     <div className="space-y-6">
+
+      {/* =====================================================
+          SUMMARY
+      ===================================================== */}
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {data.tiles.map((t) => (
-          <StatTile key={t.key} label={t.label} value={t.value} unit={t.unit} delta={t.delta} icon={ICONS[t.key]} />
+          <StatTile
+            key={t.key}
+            label={t.label}
+            value={t.value}
+            unit={t.unit}
+            delta={t.delta}
+            icon={ICONS[t.key]}
+          />
         ))}
       </div>
 
-      <div className="grid gap-6 xl:grid-cols-[1.4fr_1fr]">
-        <Card>
-          <CardHeader
-            eyebrow="12-month series"
-            title="Population trend by flagship species"
-            action={
-              <Link to="/population" className="inline-flex items-center gap-1.5 text-sm font-medium text-moss-600 hover:underline">
-                Full analytics <ArrowRight size={14} />
-              </Link>
-            }
-          />
-          <CardBody>
-            <ResponsiveContainer width="100%" height={288}>
-              <LineChart data={populationTrend} margin={{ top: 4, right: 8, bottom: 0, left: -18 }}>
-                <CartesianGrid stroke="#E7E1D5" vertical={false} />
-                <XAxis dataKey="month" tick={{ fontSize: 11, fill: '#5B6560' }} tickLine={false} axisLine={{ stroke: '#E7E1D5' }} />
-                <YAxis tick={{ fontSize: 11, fill: '#5B6560' }} tickLine={false} axisLine={false} />
-                <Tooltip
-                  contentStyle={{ borderRadius: 12, border: '1px solid #E7E1D5', fontSize: 12 }}
-                  labelStyle={{ fontWeight: 600, color: '#1A1D1A' }}
-                />
-                <Line type="monotone" dataKey="elephant" name="Asian Elephant" stroke="#2C7A5B" strokeWidth={2} dot={false} />
-                <Line type="monotone" dataKey="gaur" name="Indian Gaur" stroke="#B4763A" strokeWidth={2} dot={false} />
-                <Line type="monotone" dataKey="tahr" name="Nilgiri Tahr" stroke="#4E9E7A" strokeWidth={2} dot={false} />
-                <Line type="monotone" dataKey="tiger" name="Bengal Tiger" stroke="#8A6742" strokeWidth={2} dot={false} />
-              </LineChart>
-            </ResponsiveContainer>
-            <div className="mt-3 flex flex-wrap gap-x-5 gap-y-2 text-xs text-ink-500">
-              {[
-                ['#2C7A5B', 'Asian Elephant'], ['#B4763A', 'Indian Gaur'],
-                ['#4E9E7A', 'Nilgiri Tahr'], ['#8A6742', 'Bengal Tiger'],
-              ].map(([c, l]) => (
-                <span key={l} className="inline-flex items-center gap-1.5">
-                  <span className="h-2 w-2 rounded-full" style={{ background: c }} /> {l}
-                </span>
-              ))}
-            </div>
-          </CardBody>
-        </Card>
 
-        <Card>
-          <CardHeader eyebrow="Latest confirmed" title="Recent observations" />
-          <Table
-            columns={[
-              {
-                key: 'species', header: 'Species',
-                render: (r) => (
-                  <div className="min-w-0">
-                    <p className="truncate font-medium text-ink-900">{r.species}</p>
-                    <p className="binomial truncate text-[12px]">{r.binomial}</p>
-                  </div>
-                ),
-              },
-              { key: 'iucn', header: 'Status', render: (r) => <IucnBadge code={r.iucn} showLabel={false} /> },
-              {
-                key: 'at', header: 'Seen', align: 'right',
-                render: (r) => (
-                  <div>
-                    <p className="text-[13px] text-ink-700">{timeAgo(r.at)}</p>
-                    <p className="text-[11px] text-ink-500">{r.site}</p>
-                  </div>
-                ),
-              },
-            ]}
-            rows={data.recentObservations}
-          />
-        </Card>
-      </div>
+      {/* =====================================================
+          START NEW OBSERVATION
+      ===================================================== */}
+      <Card>
+        <div className="px-5 py-5 sm:px-6">
+          <div className="mb-4">
+            <p className="text-[10px] uppercase tracking-[0.18em] font-medium text-moss-600">
+              Field workflow
+            </p>
+
+            <h2 className="mt-1 font-display text-xl text-ink-900">
+              Start a new observation
+            </h2>
+
+            <p className="mt-1 text-sm text-ink-500">
+              Add new field evidence and let the system identify wildlife
+              through image or audio analysis.
+            </p>
+          </div>
+
+          <div className="grid gap-3 sm:grid-cols-2">
+
+            {/* Camera trap */}
+            <Link
+              to="/camera-traps"
+              className="group flex items-center justify-between rounded-xl border border-sand-200 bg-sand-50/60 p-4 transition hover:border-moss-300 hover:bg-moss-50"
+            >
+              <div className="flex items-center gap-3">
+                <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-white text-moss-600 shadow-sm">
+                  <Camera size={20} />
+                </span>
+
+                <div>
+                  <p className="text-sm font-semibold text-ink-900">
+                    Analyze camera-trap image
+                  </p>
+
+                  <p className="mt-0.5 text-xs text-ink-500">
+                    Detect wildlife from an image
+                  </p>
+                </div>
+              </div>
+
+              <ArrowRight
+                size={17}
+                className="text-ink-400 transition group-hover:translate-x-1 group-hover:text-moss-600"
+              />
+            </Link>
+
+
+            {/* Bioacoustics */}
+            <Link
+              to="/bioacoustics"
+              className="group flex items-center justify-between rounded-xl border border-sand-200 bg-sand-50/60 p-4 transition hover:border-moss-300 hover:bg-moss-50"
+            >
+              <div className="flex items-center gap-3">
+                <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-white text-moss-600 shadow-sm">
+                  <Mic size={20} />
+                </span>
+
+                <div>
+                  <p className="text-sm font-semibold text-ink-900">
+                    Analyze bioacoustic recording
+                  </p>
+
+                  <p className="mt-0.5 text-xs text-ink-500">
+                    Identify wildlife from audio
+                  </p>
+                </div>
+              </div>
+
+              <ArrowRight
+                size={17}
+                className="text-ink-400 transition group-hover:translate-x-1 group-hover:text-moss-600"
+              />
+            </Link>
+
+          </div>
+        </div>
+      </Card>
+
+
+      {/* =====================================================
+          RECENT OBSERVATIONS
+      ===================================================== */}
+      <Card>
+        <CardHeader
+          eyebrow="Latest detections"
+          title="Recent wildlife observations"
+        />
+
+        <Table
+          columns={[
+            {
+              key: 'species',
+              header: 'Species',
+              render: (r) => (
+                <div className="min-w-0">
+                  <p className="truncate font-medium text-ink-900">
+                    {r.species}
+                  </p>
+
+                  {r.binomial && (
+                    <p className="binomial truncate text-[12px]">
+                      {r.binomial}
+                    </p>
+                  )}
+                </div>
+              ),
+            },
+
+            {
+              key: 'detection',
+              header: 'Detection',
+              render: () => (
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-moss-50 px-2.5 py-1 text-[11px] font-medium text-moss-700">
+                  <CheckCircle size={12} />
+                  AI detected
+                </span>
+              ),
+            },
+
+            {
+              key: 'confidence',
+              header: 'Confidence',
+              render: (r) => (
+                <span className="text-[13px] font-medium text-ink-700">
+                  {r.confidence != null
+                    ? `${(Number(r.confidence) * 100).toFixed(0)}%`
+                    : '—'}
+                </span>
+              ),
+            },
+
+            {
+              key: 'at',
+              header: 'Seen',
+              align: 'right',
+              render: (r) => (
+                <div>
+                  <p className="text-[13px] text-ink-700">
+                    {timeAgo(r.at)}
+                  </p>
+
+                  <p className="text-[11px] text-ink-500">
+                    {r.site}
+                  </p>
+                </div>
+              ),
+            },
+          ]}
+          rows={data.recentObservations}
+        />
+      </Card>
+
     </div>
   );
 }

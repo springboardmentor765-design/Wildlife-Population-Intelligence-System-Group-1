@@ -45,7 +45,14 @@ export const authService = {
       return data;
     }
     const { data } = await api.post('/auth/register', payload);
-    return data;
+
+    localStorage.setItem(TOKEN_KEY, data.access_token);
+    localStorage.setItem(USER_KEY, JSON.stringify(data.user));
+
+    return {
+      token: data.access_token,
+      user: data.user,
+    };
   },
 
   async updateProfile(patch) {
