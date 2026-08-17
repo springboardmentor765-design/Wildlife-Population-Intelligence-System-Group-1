@@ -1,8 +1,8 @@
 export const ROLES = {
   RESEARCHER: 'researcher',
   CONSERVATION: 'conservation_officer',
-  FOREST: 'forest_officer',
-  ADMIN: 'admin',
+  FOREST: 'forest_department_officer',
+  ADMIN: 'administrator',
 };
 
 export const ROLE_LABELS = {
