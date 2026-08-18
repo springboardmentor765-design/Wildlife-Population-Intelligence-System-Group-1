@@ -1,793 +1,928 @@
-# EcoVision AI - Wildlife Population Intelligence System
+# 🚀 DocumentDB for VS Code
 
 <p align="center">
-  <strong>AI-Powered Wildlife Monitoring, Population Analytics & Conservation Intelligence Platform</strong>
+
+<strong>A powerful, open-source GUI for DocumentDB and MongoDB API databases.</strong>
+
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Python-3.11+-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python"/>
-  <img src="https://img.shields.io/badge/FastAPI-Backend-009688?style=for-the-badge&logo=fastapi&logoColor=white" alt="FastAPI"/>
-  <img src="https://img.shields.io/badge/Next.js-15-000000?style=for-the-badge&logo=next.js&logoColor=white" alt="Next.js"/>
-  <img src="https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react&logoColor=black" alt="React"/>
-  <img src="https://img.shields.io/badge/TailwindCSS-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white" alt="Tailwind CSS"/>
-  <img src="https://img.shields.io/badge/YOLO-Ultralytics-111827?style=for-the-badge" alt="YOLO"/>
-  <img src="https://img.shields.io/badge/SQLite-Database-003B57?style=for-the-badge&logo=sqlite&logoColor=white" alt="SQLite"/>
-  <img src="https://img.shields.io/badge/Docker-Containerized-2496ED?style=for-the-badge&logo=docker&logoColor=white" alt="Docker"/>
-  <img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="MIT License"/>
+
+  <img src="https://img.shields.io/badge/VS%20Code-Extension-007ACC?style=for-the-badge&logo=visual-studio-code&logoColor=white" alt="VS Code"/>
+  <img src="https://img.shields.io/badge/DocumentDB-MongoDB%20API-47A248?style=for-the-badge&logo=mongodb&logoColor=white" alt="DocumentDB"/>
+  <img src="https://img.shields.io/badge/MongoDB-Compatible-47A248?style=for-the-badge&logo=mongodb&logoColor=white" alt="MongoDB"/>
+  <img src="https://img.shields.io/badge/Open%20Source-Community-181717?style=for-the-badge&logo=github&logoColor=white" alt="Open Source"/>
+
 </p>
 
 <p align="center">
-  <a href="#-overview">Overview</a> •
-  <a href="#-features">Features</a> •
-  <a href="#-architecture">Architecture</a> •
-  <a href="#-installation">Installation</a> •
-  <a href="#-api">API</a> •
-  <a href="#-roadmap">Roadmap</a>
+
+<a href="#-overview">Overview</a> • <a href="#-features">Features</a> • <a href="#-query-your-data">Query</a> • <a href="#-connect-anywhere">Connections</a> • <a href="#-data-management">Data Management</a> • <a href="#-indexes">Indexes</a>
+
 </p>
 
 ---
 
-## 🌍 Overview
+# 🌍 Overview
 
-The **Wildlife Population Intelligence System** is an end-to-end AI-powered conservation platform designed to transform wildlife monitoring into a data-driven intelligence workflow.
+**DocumentDB for VS Code** is an open-source database management extension designed for working with **DocumentDB and MongoDB API-compatible databases directly inside Visual Studio Code**.
 
-The system combines **Computer Vision, Bioacoustic Analysis, Population Analytics, Habitat Intelligence, and Interactive Dashboards** to help researchers and conservation teams monitor wildlife populations and ecosystem health.
+The extension provides an integrated environment for **browsing, querying, analyzing, and managing database data** without requiring external database GUI applications.
 
-The platform can process multiple sources of wildlife data, including:
+Because DocumentDB supports the **MongoDB API wire protocol**, the extension can work with a wide range of MongoDB API databases, including:
 
-* 📷 Camera-trap imagery
-* 🚁 Drone imagery
-* 🎙️ Wildlife audio recordings
-* 📊 Historical population observations
-* 🌿 Habitat and ecosystem information
+* 📦 DocumentDB
+* ☁️ Azure DocumentDB
+* ☁️ AWS DocumentDB
+* 🌐 Azure Cosmos DB for MongoDB (RU)
+* 🍃 MongoDB Atlas
+* 🖥️ Self-hosted MongoDB API instances
+* 🧪 Local MongoDB API emulators
 
-AI-powered processing transforms these inputs into actionable intelligence such as **species detections, confidence scores, population statistics, biodiversity trends, habitat insights, and conservation reports**.
+Everything runs directly inside VS Code, allowing developers to connect to their databases, explore collections, execute queries, manage documents, and work with indexes from a single development environment.
 
-> **Vision:** Build an intelligent digital infrastructure that enables faster, more accurate, and data-driven wildlife conservation decisions.
+> **Vision:** Provide developers with a unified database development experience where querying, administration, and application development can happen inside VS Code.
 
 ---
 
 # ✨ Key Features
 
-## 🤖 AI Wildlife Detection
+## 🔎 Query Your Data, Your Way
 
-The computer vision pipeline uses **Ultralytics YOLO** to analyze wildlife imagery.
+DocumentDB for VS Code provides **three integrated query surfaces** for interacting with database data:
+
+```text
+                    Database
+                       │
+                       ▼
+              ┌──────────────────┐
+              │ DocumentDB for   │
+              │     VS Code      │
+              └────────┬─────────┘
+                       │
+          ┌────────────┼────────────┐
+          │            │            │
+          ▼            ▼            ▼
+   Collection View  Query       Interactive
+                    Playground    Shell
+          │            │            │
+          └────────────┼────────────┘
+                       ▼
+                  Query Results
+```
+
+All three surfaces share **schema awareness** and navigation actions, allowing developers to move between visual queries, JavaScript scripts, and shell-based workflows.
+
+---
+
+# 🧩 Collection View
+
+The **Collection View** provides a visual query interface for filtering, projecting, and sorting collection data.
+
+As you work with a collection, the editor can provide suggestions based on the actual data in the collection.
 
 ### Capabilities
 
-* 🐾 Wildlife species detection
-* 🎯 Bounding-box generation
-* 📊 Detection confidence scoring
-* 🔎 Species classification
-* 📷 Camera-trap image processing
-* 🚁 Drone-image analysis
-* 📈 Detection statistics
+* 🔍 Schema-aware field suggestions
+* 🧬 BSON type indicators
+* ⚡ Type-aware operator ordering
+* 📝 Filter editor
+* 📋 Project editor
+* ↕️ Sort editor
+* 💡 Context-aware value suggestions
+* 📚 Operator documentation on hover
+* 🚨 Real-time validation
+* 🛠️ Typo detection
 
-### Detection Pipeline
+### Query Intelligence
+
+The query editor understands different field types and adjusts suggestions accordingly.
+
+For example:
 
 ```text
-Wildlife Image
-      │
-      ▼
-Image Preprocessing
-      │
-      ▼
-YOLO Detection Engine
-      │
-      ├── Species Detection
-      ├── Bounding Boxes
-      └── Confidence Scores
-      │
-      ▼
-Wildlife Intelligence
-      │
-      ▼
-Database Storage
-      │
-      ▼
-Analytics Dashboard
+Number Field
+     │
+     ├── Comparison Operators
+     ├── Range Operators
+     └── Numeric Values
+
+String Field
+     │
+     ├── Regex Operators
+     ├── String Operators
+     └── String Values
+```
+
+### Relaxed Query Syntax
+
+Collection View supports convenient query syntax including:
+
+* Unquoted keys
+* Single quotes
+* BSON constructors
+* `ObjectId()`
+* `ISODate()`
+* JavaScript expressions
+
+It also provides dedicated completions for:
+
+```text
+Project
+  1 → Include field
+  0 → Exclude field
+
+Sort
+  1  → Ascending
+ -1  → Descending
 ```
 
 ---
 
-# 🌿 Biodiversity Intelligence
+# 🧪 Query Playground
 
-The platform converts individual wildlife detections into higher-level ecological insights.
+The **Query Playground** allows developers to write and execute JavaScript database scripts directly inside VS Code.
 
-### Intelligence Modules
-
-* Species distribution
-* Population estimation
-* Population trend analysis
-* Habitat classification
-* Animal behavior analysis
-* Ecosystem health assessment
-* Biodiversity monitoring
-* Threat assessment
-* Conservation insights
-
----
-
-# 🎙️ Bioacoustic Intelligence
-
-The platform also supports wildlife audio analysis.
-
-### Current Capabilities
-
-* 🎵 Audio upload
-* 🔊 Wildlife sound processing
-* 🐦 Species estimation
-* 📊 Confidence estimation
-* 📈 Acoustic pattern analysis
-
-The current implementation includes a **mock AI bioacoustic engine**, providing an extensible architecture for integrating a production-grade audio classification model in the future.
-
-### Bioacoustic Pipeline
+Scripts use the:
 
 ```text
-Audio Recording
-      │
-      ▼
-Audio Upload
-      │
-      ▼
-Feature Extraction
-      │
-      ▼
-Species Prediction
-      │
-      ▼
-Confidence Estimation
-      │
-      ▼
-Acoustic Intelligence
+.documentdb.js
 ```
 
----
+file format.
 
-# 📊 Analytics Dashboard
+Each script block can be executed independently using **CodeLens** controls.
 
-The web dashboard provides an interactive overview of wildlife and ecosystem data.
+### Features
 
-### Analytics
+* ▶️ Run individual script blocks
+* ▶️ Run all scripts
+* 💻 Full JavaScript syntax
+* ✨ Autocompletion
+* 🔗 `db.*` chain completion
+* 📚 Collection method suggestions
+* 🧬 Schema field suggestions
+* 🖨️ `console.log()` support
+* 🖨️ `print()` support
+* 🖨️ `printjson()` support
+* 📊 Dedicated result panel
 
-* 🐾 Total species detected
-* 📈 Population trends
-* 🌍 Species distribution
-* 🗺️ Detection heatmaps
-* 🌿 Habitat distribution
-* ❤️ Ecosystem health score
-* ⚠️ Threat assessment
-* 📅 Monthly detection trends
-* 🎯 AI confidence metrics
+### Multi-Connection Workflows
 
-Charts and visualizations are implemented using **React and Recharts**.
+Multiple Query Playground files can remain open simultaneously.
 
----
-
-# 👥 Role-Based Access Control
-
-The platform provides dedicated workflows for different stakeholders.
-
-| Role                        | Primary Responsibilities                                       |
-| --------------------------- | -------------------------------------------------------------- |
-| 👨‍🔬 **Researcher**        | Analyze wildlife data, species trends and research insights    |
-| 🌳 **Conservation Officer** | Monitor population health, threats and conservation indicators |
-| 🛠️ **Administrator**       | Manage users, system data and platform operations              |
-
-Authentication is implemented using **JWT-based authentication** with protected API routes.
-
----
-
-# 📄 Automated Reporting
-
-The system provides automated wildlife intelligence reporting.
-
-### Supported Reports
-
-* Wildlife detection summaries
-* Species statistics
-* Population reports
-* Conservation intelligence reports
-* Analytical datasets
-* Excel exports
-
-### Reporting Stack
+Each playground can be connected to a different database server.
 
 ```text
-Pandas
+Playground 1
+     │
+     ▼
+Database A
+
+
+Playground 2
+     │
+     ▼
+Database B
+
+
+Playground 3
+     │
+     ▼
+Database C
+```
+
+Queries can also be opened directly in:
+
+* Collection View
+* Interactive Shell
+
+---
+
+# 💻 Interactive Shell
+
+The **Interactive Shell** provides a REPL-style database environment directly inside VS Code.
+
+Common database commands can be executed without leaving the editor.
+
+### Supported Shell Features
+
+* `show dbs`
+* `use <db>`
+* `help`
+* `it`
+* Persistent variables
+* Syntax highlighting
+* Tab completion
+* Ghost text suggestions
+* Context-aware database suggestions
+* Collection completion
+* Method completion
+* Operator completion
+* Field completion
+
+### Smart Completion
+
+The shell understands the current database context and can suggest:
+
+```text
+Database
    │
    ▼
-Data Processing
+Collection
    │
    ▼
-OpenPyXL
+Method
    │
    ▼
-Excel Report
+Operator
+   │
+   ▼
+Field
 ```
 
----
-
-# 🏗️ System Architecture
-
-
-
----
-
-# 🔄 End-to-End Data Flow
+Long-running operations can also be cancelled using:
 
 ```text
-Data Collection
-      │
-      ├── Camera Images
-      ├── Drone Images
-      └── Audio Recordings
-      │
-      ▼
-AI Processing
-      │
-      ├── YOLO Detection
-      └── Bioacoustic Analysis
-      │
-      ▼
-Data Validation
-      │
-      ▼
-Database Storage
-      │
-      ▼
-Population & Biodiversity Analytics
-      │
-      ▼
-Conservation Intelligence
-      │
-      ├── Dashboard
-      ├── Visualizations
-      └── Reports
+Ctrl + C
 ```
 
----
-
-# ⚙️ Technology Stack
-
-## Frontend
-
-| Technology        | Purpose                     |
-| ----------------- | --------------------------- |
-| **Next.js 15**    | Full-stack React framework  |
-| **React 19**      | UI development              |
-| **Tailwind CSS**  | Styling and responsive UI   |
-| **Framer Motion** | Animations and interactions |
-| **Recharts**      | Analytics and visualization |
-| **Axios**         | API communication           |
-
-## Backend
-
-| Technology       | Purpose                 |
-| ---------------- | ----------------------- |
-| **Python 3.11+** | Backend development     |
-| **FastAPI**      | REST API framework      |
-| **SQLAlchemy**   | ORM                     |
-| **SQLite**       | Development database    |
-| **JWT**          | Authentication          |
-| **Pandas**       | Data analysis           |
-| **OpenPyXL**     | Excel report generation |
-
-## Artificial Intelligence
-
-| Technology             | Purpose                   |
-| ---------------------- | ------------------------- |
-| **Ultralytics YOLO**   | Wildlife object detection |
-| **OpenCV**             | Image processing          |
-| **NumPy**              | Numerical computation     |
-| **Bioacoustic Engine** | Wildlife audio analysis   |
-
-## DevOps & Development
-
-| Technology         | Purpose                     |
-| ------------------ | --------------------------- |
-| **Docker**         | Containerization            |
-| **Docker Compose** | Multi-service orchestration |
-| **Git**            | Version control             |
-| **GitHub**         | Source-code collaboration   |
+Results include clickable navigation links that can open the corresponding collection in Collection View or Query Playground.
 
 ---
 
-# 📂 Project Structure
+# ⚡ Zero-Install Runtime
+
+The Query Playground and Interactive Shell require **no external database shell installation**.
+
+The runtime is bundled directly into the extension.
+
+### Benefits
+
+* 🚫 No external shell executable
+* 🚫 No PATH configuration
+* 🚫 No shell version mismatches
+* 🔐 Entra ID authentication support
+* 🪟 Windows support
+* 🍎 macOS support
+* 🐧 Linux support
+
+The runtime reuses the database connection already established by the extension.
+
+### Privacy
+
+Schema information used for autocompletion is collected locally from the documents that you browse and query.
+
+> **No database data is sent to external services for schema-aware completion.**
+
+---
+
+# 🌐 Connect Anywhere
+
+DocumentDB for VS Code supports databases that communicate through the **MongoDB API wire protocol**.
 
 ```text
-Wildlife-Population-Intelligence-System/
-│
-├── backend/
-│   │
-│   └── wildlife-backend/
-│       ├── api/
-│       ├── database/
-│       ├── models/
-│       ├── schemas/
-│       ├── services/
-│       ├── results/
-│       ├── uploads/
-│       ├── utils/
-│       │
-│       ├── alembic/
-│       ├── .gitignore
-│       ├── alembic.ini
-│       ├── Dockerfile
-│       ├── label_encoder.pkl
-│       ├── scaler.pkl
-│       ├── main.py
-│       ├── requirements.txt
-│       ├── test_alerts.py
-│       └── README.md
-│
-├── frontend/
-│   │
-│   └── wildlife-frontend/
-│       ├── app/
-│       ├── components/
-│       ├── hooks/
-│       ├── lib/
-│       ├── public/
-│       └── package.json
-│
-├── docker-compose.yml
-├── .gitignore
-├── README.md
-└── LICENSE
+                 DocumentDB for VS Code
+                          │
+             ┌────────────┼────────────┐
+             │            │            │
+             ▼            ▼            ▼
+        Connection    Service       Local
+          String      Discovery    Environment
+             │            │            │
+             ▼            ▼            ▼
+        MongoDB API-Compatible Databases
 ```
+
+### Connection Methods
+
+* 🔗 Connection strings
+* ☁️ Azure Service Discovery
+* 🍃 MongoDB Atlas Service Discovery
+* ☸️ Kubernetes Service Discovery
+* 🖥️ Local DocumentDB
+* 🧪 Local MongoDB API instances
+* 🌐 Azure Cosmos DB Emulator
 
 ---
 
-# 🚀 Installation
+# 🔗 Connection Strings
 
-## Prerequisites
-
-Make sure the following tools are installed:
-
-* Python **3.11+**
-* Node.js **18+**
-* npm
-* Git
-* Docker Desktop *(optional but recommended)*
-
----
-
-# 🐳 Option 1 — Docker Setup
-
-Docker is the recommended approach for a consistent development environment.
-
-### 1. Clone the repository
-
-```bash
-git clone https://github.com/yourusername/Wildlife-Population-Intelligence-System.git
-```
-
-### 2. Navigate into the project
-
-```bash
-cd Wildlife-Population-Intelligence-System
-```
-
-### 3. Build and start the services
-
-```bash
-docker compose up --build
-```
-
-### 4. Run in detached mode
-
-```bash
-docker compose up -d
-```
-
-### 5. Stop services
-
-```bash
-docker compose down
-```
-
----
-
-# 💻 Option 2 — Local Development
-
-## Backend Setup
-
-Navigate to the backend:
-
-```bash
-cd backend/wildlife-backend
-```
-
-Create a virtual environment:
-
-### Windows
-
-```bash
-python -m venv venv
-venv\Scripts\activate
-```
-
-### Linux / macOS
-
-```bash
-python3 -m venv venv
-source venv/bin/activate
-```
-
-Install dependencies:
-
-```bash
-pip install -r requirements.txt
-```
-
-Start the FastAPI server:
-
-```bash
-uvicorn main:app --reload
-```
-
-Backend:
+Connect to a database by providing its connection string.
 
 ```text
-http://localhost:8000
+Connection String
+        │
+        ▼
+DocumentDB for VS Code
+        │
+        ▼
+MongoDB API Wire Protocol
+        │
+        ▼
+Database
 ```
+
+This provides a direct workflow for connecting to supported MongoDB API-compatible databases.
 
 ---
 
-# 🌐 Frontend Setup
+# ☁️ Azure Service Discovery
 
-Open another terminal:
+The extension can discover and connect to Azure-hosted database resources directly from the VS Code sidebar.
 
-```bash
-cd frontend/wildlife-frontend
-```
+Supported resources include:
 
-Install dependencies:
+* Azure DocumentDB
+* Azure Cosmos DB for MongoDB (RU)
+* DocumentDB running on Azure VMs
 
-```bash
-npm install
-```
+### Entra ID Authentication
 
-Start the development server:
+Azure-hosted databases support **Entra ID authentication** with:
 
-```bash
-npm run dev
-```
-
-Frontend:
-
-```text
-http://localhost:3000
-```
+* Multi-account support
+* Multi-tenant support
 
 ---
 
-# 📡 Backend API Documentation
+# 📁 Connection Organization
 
-FastAPI automatically generates interactive API documentation.
-
-### Swagger UI
-
-```text
-http://localhost:8000/docs
-```
-
-### ReDoc
-
-```text
-http://localhost:8000/redoc
-```
-
-These interfaces can be used to inspect and test available REST endpoints.
-
----
-
-# 🔑 Authentication
-
-The backend uses **JWT-based authentication**.
-
-Authenticated requests should provide a Bearer token:
-
-```http
-Authorization: Bearer <your-access-token>
-```
-
-### Supported Roles
-
-```text
-Researcher
-Conservation Officer
-Administrator
-```
-
-Protected resources require appropriate authentication and authorization.
-
----
-
-# 📡 API Overview
-
-> Endpoint names may evolve as the backend API is expanded. The Swagger documentation at `/docs` should be treated as the source of truth for the current implementation.
-
-| Method | Endpoint        | Purpose                      |
-| ------ | --------------- | ---------------------------- |
-| `POST` | `/login`        | Authenticate a user          |
-| `POST` | `/detect`       | Process wildlife imagery     |
-| `POST` | `/upload-audio` | Analyze wildlife audio       |
-| `GET`  | `/species`      | Retrieve species information |
-| `GET`  | `/dashboard`    | Retrieve analytics           |
-| `GET`  | `/reports`      | Retrieve generated reports   |
-
-
----
-
-# 🎙️ Bioacoustic Workflow
-
-```text
-Audio Recording
-      │
-      ▼
-Audio Upload
-      │
-      ▼
-Preprocessing
-      │
-      ▼
-Feature Extraction
-      │
-      ▼
-Species Prediction
-      │
-      ▼
-Confidence Estimation
-      │
-      ▼
-Acoustic Intelligence
-      │
-      ▼
-Conservation Report
-```
-
----
-
-# 📈 Intelligence Dashboard
-
-The dashboard transforms raw wildlife detections into decision-support metrics.
-
-### Key Indicators
-
-```text
-Species Diversity
-       │
-       ├── Species Count
-       ├── Species Distribution
-       └── Biodiversity Trends
-
-Population Health
-       │
-       ├── Population Estimates
-       ├── Growth Trends
-       └── Detection Frequency
-
-Ecosystem Health
-       │
-       ├── Habitat Distribution
-       ├── Threat Indicators
-       └── Ecosystem Score
-```
-
----
-
-# 📸 Screenshots
-
-## 🖥️ Main Dashboard
-
-<p align="center">
-  <img src="screenshots/image1.png" alt="Wildlife Intelligence Dashboard" width="900"/>
-</p>
-
----
-
-## 🔬 Research Dashboard
-
-<p align="center">
-  <img src="screenshots/image2.png" alt="Research Dashboard" width="900"/>
-</p>
-
----
-
-## 🎯 AI Wildlife Detection
-
-<p align="center">
-  <img src="screenshots/image3.png" alt="AI Wildlife Detection" width="900"/>
-</p>
-
----
-
-## 📊 Species Analytics
-
-<p align="center">
-  <img src="screenshots/image4.png" alt="Species Analytics Dashboard" width="900"/>
-</p>
-
----
-
-## 📈 Population Insights
-
-<p align="center">
-  <img src="screenshots/image5.png" alt="Population Insights" width="900"/>
-</p>
-
----
-
-## 📄 Report Generator
-
-<p align="center">
-  <img src="screenshots/image6.png" alt="Wildlife Report Generator" width="900"/>
-</p>
-
----
-
-## 📑 Conservation Report
-
-<p align="center">
-  <img src="screenshots/image7.png" alt="Generated Conservation Report" width="900"/>
-</p>
-
----
-
-# 🧪 Testing
-
-## Backend
-
-Run backend tests with:
-
-```bash
-pytest
-```
-
-For more verbose output:
-
-```bash
-pytest -v
-```
-
-## Frontend
-
-Run the frontend test suite:
-
-```bash
-npm test
-```
-
----
-
-# 🔐 Environment Variables
-
-Never commit secrets, API keys, credentials, or private configuration to Git.
-
-Create a local environment file when required:
-
-```text
-.env
-```
+Connections can be organized into folders and subfolders.
 
 Example:
 
-```env
-DATABASE_URL=your_database_url
-SECRET_KEY=your_secret_key
-JWT_SECRET=your_jwt_secret
+```text
+Connections
+│
+├── Production
+│   ├── DocumentDB
+│   └── Cosmos DB
+│
+├── Development
+│   ├── Local
+│   └── Staging
+│
+└── Kubernetes
+    ├── AKS
+    └── Local Cluster
 ```
 
-> Keep `.env` in `.gitignore`.
+This makes it easier to manage multiple environments and database connections.
 
 ---
 
-# 🌱 Git Workflow
+# 🖥️ DocumentDB Local
 
-The project follows a feature-branch workflow.
+DocumentDB for VS Code provides guided setup for a local **DocumentDB** instance.
 
-Create a feature branch:
+The extension can:
 
-```bash
-git checkout -b feature/your-feature
-```
+1. Pull the official DocumentDB image
+2. Create a persistent Docker volume
+3. Generate credentials
+4. Select an available port
+5. Wait for database readiness
+6. Save the connection automatically
 
-Make your changes and commit:
-
-```bash
-git add .
-git commit -m "Add wildlife detection feature"
-```
-
-Push your branch:
-
-```bash
-git push origin feature/your-feature
-```
-
-Then open a Pull Request for review.
-
-### Recommended Branch Structure
+### Local Setup Workflow
 
 ```text
-main
-│
-├── feature/wildlife-detection
-├── feature/bioacoustic-analysis
-├── feature/dashboard
-├── feature/report-generation
-└── feature/authentication
+DocumentDB Local
+       │
+       ▼
+Pull Official Image
+       │
+       ▼
+Create Persistent Volume
+       │
+       ▼
+Generate Credentials
+       │
+       ▼
+Select Available Port
+       │
+       ▼
+Wait for Database
+       │
+       ▼
+Save Connection
+       │
+       ▼
+Ready to Use
 ```
+
+### Local Management
+
+From the VS Code connection tree, developers can:
+
+* ▶️ Start the instance
+* ⏹️ Stop the instance
+* 🔄 Restart the instance
+* 🗑️ Delete the instance
+
+The extension keeps the displayed state synchronized with Docker.
+
+### Docker Support
+
+DocumentDB Local works with:
+
+* Docker Engine
+* Docker Desktop
+
+The extension does **not** install Docker or elevate system privileges.
+
+---
+
+# 🧪 Local Database Support
+
+In addition to DocumentDB Local, the extension can connect to:
+
+* Azure Cosmos DB Emulator
+* Local MongoDB API instances
+* Other databases compatible with the MongoDB API
+
+For detailed local setup, refer to the official **Set up DocumentDB Local** documentation.
+
+---
+
+# 🍃 MongoDB Atlas Service Discovery
+
+DocumentDB for VS Code can discover MongoDB Atlas resources directly from the sidebar.
+
+Developers can browse:
+
+```text
+Atlas Organization
+        │
+        ▼
+Projects
+        │
+        ▼
+Clusters
+        │
+        ▼
+Saved Database Connection
+```
+
+### Atlas Features
+
+* 🔐 API Key authentication
+* 🔐 Service Account authentication
+* 🏢 Multiple organization credentials
+* 🌳 Hierarchical tree view
+* 📋 Flat cluster list
+* 🟡 Cluster state labels
+* 🔗 Open directly in MongoDB Atlas
+
+Atlas discovery credentials are used to locate resources.
+
+Database access continues to use the configured Atlas database username and password.
+
+---
+
+# ☸️ Kubernetes Service Discovery
+
+DocumentDB for VS Code can discover DocumentDB clusters running across Kubernetes environments.
+
+Supported environments include:
+
+* Amazon EKS
+* Azure AKS
+* Google GKE
+* kind
+* minikube
+* Docker Desktop
+
+### Kubernetes Workflow
+
+```text
+Kubeconfig
+    │
+    ▼
+Kubernetes Context
+    │
+    ▼
+DocumentDB Cluster Discovery
+    │
+    ▼
+Service Discovery
+    │
+    ▼
+Port-Forward Tunnel
+    │
+    ▼
+Database Connection
+```
+
+### Kubernetes Features
+
+* Multiple kubeconfig sources
+* Default kubeconfig support
+* File-based kubeconfig
+* Pasted YAML configuration
+* DocumentDB Kubernetes Operator recognition
+* Annotated service discovery
+* Automatic port-forwarding
+* Automatic tunnel restoration
+* Connectivity status labels
+* Custom Kubernetes context names
+* List and tree layouts
+
+---
+
+# 📊 Browse and Manage Data
+
+DocumentDB for VS Code provides multiple ways to inspect and manage database documents.
+
+## Data Views
+
+Collections can be viewed using:
+
+| View      | Purpose                                   |
+| --------- | ----------------------------------------- |
+| **Table** | Structured tabular representation         |
+| **Tree**  | Hierarchical document exploration         |
+| **JSON**  | Raw JSON-oriented document representation |
+
+Built-in pagination makes it easier to navigate through larger collections.
+
+---
+
+# 📝 Document Management
+
+Documents can be managed directly from VS Code.
+
+Supported operations include:
+
+* ➕ Create documents
+* ✏️ Edit documents
+* 🗑️ Delete documents
+* 🔍 Browse documents
+* 📄 Inspect document structures
+
+This allows developers to perform common database management tasks without switching to an external GUI.
+
+---
+
+# 📥 Import and Export
+
+DocumentDB for VS Code supports data movement through JSON files.
+
+### Import
+
+```text
+JSON File
+    │
+    ▼
+DocumentDB for VS Code
+    │
+    ▼
+Collection
+```
+
+### Export
+
+Developers can export:
+
+* Documents
+* Query results
+* Entire collections
+
+---
+
+# 📋 Collection Copy and Paste
+
+Collections can be copied and pasted between databases or servers.
+
+```text
+Source Database
+      │
+      ▼
+Collection
+      │
+      │ Copy
+      ▼
+DocumentDB for VS Code
+      │
+      │ Paste
+      ▼
+Target Database
+```
+
+Conflict resolution strategies can be used when existing data creates conflicts during the operation.
+
+---
+
+# 📑 Manage Indexes
+
+The **Indexes** tab in Collection View brings index management directly alongside the queries affected by those indexes.
+
+Developers can:
+
+* 🔍 Review existing indexes
+* ➕ Create required indexes
+* 🗑️ Remove unnecessary indexes
+
+The goal is to keep index management close to the collection and query workflow.
+
+```text
+Collection
+    │
+    ├── Documents
+    ├── Queries
+    └── Indexes
+          │
+          ├── Review
+          ├── Create
+          └── Remove
+```
+
+---
+
+# 🏗️ Integrated Database Workflow
+
+DocumentDB for VS Code brings the primary database development workflow into a single environment.
+
+```text
+                 VS Code
+                    │
+        ┌───────────┼───────────┐
+        │           │           │
+        ▼           ▼           ▼
+   Collection    Query      Interactive
+     View       Playground     Shell
+        │           │           │
+        └───────────┼───────────┘
+                    │
+                    ▼
+             Database Access
+                    │
+        ┌───────────┼───────────┐
+        │           │           │
+        ▼           ▼           ▼
+      Browse      Query       Manage
+        │           │           │
+        └───────────┼───────────┘
+                    ▼
+             Database Results
+```
+
+---
+
+# 🔄 End-to-End Data Workflow
+
+```text
+Connect to Database
+        │
+        ▼
+Discover Database
+        │
+        ▼
+Select Database
+        │
+        ▼
+Select Collection
+        │
+        ▼
+┌──────────────────────────┐
+│      Work With Data      │
+├──────────────────────────┤
+│ Collection View          │
+│ Query Playground         │
+│ Interactive Shell        │
+└────────────┬─────────────┘
+             │
+             ▼
+      Query / Browse Data
+             │
+             ▼
+      Manage Documents
+             │
+             ▼
+       Manage Indexes
+             │
+             ▼
+       Import / Export
+```
+
+---
+
+# 🛠️ Technology & Platform
+
+## Database Compatibility
+
+| Technology           | Purpose                            |
+| -------------------- | ---------------------------------- |
+| **DocumentDB**       | Document database platform         |
+| **MongoDB API**      | Database communication protocol    |
+| **MongoDB Atlas**    | Cloud database discovery           |
+| **Azure DocumentDB** | Azure-hosted database              |
+| **Azure Cosmos DB**  | MongoDB API database               |
+| **AWS DocumentDB**   | Cloud document database            |
+| **Kubernetes**       | Cluster discovery and connectivity |
+| **Docker**           | Local DocumentDB environments      |
+
+## Development Environment
+
+| Technology             | Purpose                            |
+| ---------------------- | ---------------------------------- |
+| **Visual Studio Code** | Integrated development environment |
+| **JavaScript**         | Query Playground scripting         |
+| **Docker**             | Local DocumentDB runtime           |
+| **MongoDB API**        | Database communication             |
+| **BSON**               | Document and query data types      |
+
+---
+
+# 🔐 Authentication & Security
+
+DocumentDB for VS Code supports authentication workflows for supported database environments.
+
+### Authentication Capabilities
+
+* Connection-string authentication
+* Entra ID authentication
+* Azure multi-account authentication
+* Azure multi-tenant authentication
+* MongoDB Atlas API Key authentication
+* MongoDB Atlas Service Account authentication
+
+Atlas discovery credentials are used for resource discovery, while database access uses the configured database credentials.
+
+---
+
+# 🔒 Privacy
+
+Schema information used for query autocompletion is gathered locally from the documents that developers browse and query.
+
+The extension does not send this schema information to external services for autocompletion.
+
+> **Your database development workflow stays inside VS Code.**
+
+---
+
+# 📚 Documentation
+
+Detailed documentation is available for specific workflows, including:
+
+### DocumentDB Local
+
+See the **Set up DocumentDB Local** guide for local installation and configuration.
+
+### MongoDB Atlas
+
+See the **MongoDB Atlas Service Discovery** guide for Atlas organizations, projects, clusters, and credentials.
+
+### Kubernetes
+
+See the **Kubernetes Service Discovery** guide for Kubernetes-based DocumentDB cluster discovery and connectivity.
+
+---
+
+# 🌟 Project Highlights
+
+```text
+┌──────────────────────────────────────────────┐
+│            DOCUMENTDB FOR VS CODE            │
+├──────────────────────────────────────────────┤
+│                                              │
+│        🔎 Collection View                   │
+│                    +                         │
+│        🧪 Query Playground                  │
+│                    +                         │
+│        💻 Interactive Shell                 │
+│                    +                         │
+│        🌐 Multi-Cloud Connectivity          │
+│                    +                         │
+│        📊 Data Management                   │
+│                    +                         │
+│        📑 Index Management                  │
+│                                              │
+│                    =                         │
+│                                              │
+│       COMPLETE DATABASE WORKFLOW             │
+│             INSIDE VS CODE                   │
+│                                              │
+└──────────────────────────────────────────────┘
+```
+
+---
+
+# 💡 Why DocumentDB for VS Code?
+
+Modern developers frequently switch between their code editor, database GUI, terminal, cloud console, and infrastructure tools.
+
+DocumentDB for VS Code brings many of these database workflows directly into the development environment.
+
+Instead of switching applications:
+
+```text
+Traditional Workflow
+
+VS Code
+   ↓
+Database GUI
+   ↓
+Terminal
+   ↓
+Cloud Console
+   ↓
+Kubernetes CLI
+```
+
+The extension provides an integrated workflow:
+
+```text
+                VS Code
+                   │
+        ┌──────────┼──────────┐
+        ▼          ▼          ▼
+      Query      Browse     Manage
+        │          │          │
+        └──────────┼──────────┘
+                   ▼
+             Database
+```
+
+This makes database exploration, querying, document management, local development, cloud discovery, and index administration accessible from one environment.
+
+---
+
+# 🌍 Supported Database Ecosystem
+
+```text
+                 DocumentDB
+                      │
+                      ▼
+             MongoDB API Protocol
+                      │
+        ┌─────────────┼─────────────┐
+        │             │             │
+        ▼             ▼             ▼
+     Azure           AWS         MongoDB
+   DocumentDB     DocumentDB      Atlas
+        │             │             │
+        └─────────────┼─────────────┘
+                      │
+              ┌───────┼────────┐
+              ▼       ▼        ▼
+           Cosmos   Self-Hosted Local
+            DB       Instances  Emulators
+```
+
+---
+
+# 📌 Summary
+
+**DocumentDB for VS Code** provides a complete database development experience for databases that support the MongoDB API wire protocol.
+
+Its core capabilities include:
+
+* 🔎 Schema-aware Collection View
+* 🧪 JavaScript Query Playground
+* 💻 Integrated Interactive Shell
+* ⚡ Zero-install query runtime
+* ☁️ Azure Service Discovery
+* 🍃 MongoDB Atlas Service Discovery
+* ☸️ Kubernetes Service Discovery
+* 🖥️ Local DocumentDB setup
+* 📊 Table, Tree, and JSON data views
+* 📝 Document creation, editing, and deletion
+* 📥 JSON import and export
+* 📋 Collection copy and paste
+* 📑 Index management
+* 🔐 Entra ID authentication
+* 📁 Connection folders and subfolders
+
+> **One editor. One workflow. Your database.**
 
 ---
 
 # 📄 License
 
-This project is licensed under the **MIT License**.
+DocumentDB for VS Code is an **open-source project**.
 
-See the [`LICENSE`](LICENSE) file for details.
+Refer to the project's official repository for licensing information and contribution guidelines.
 
 ---
 
-# 👨‍💻 Author
+# 🌟 Final Takeaway
 
-## Ashwin Chauhan - Team 1
-
-**Computer Science Engineer**
-
-Focused on building practical software solutions across:
+DocumentDB for VS Code turns **Visual Studio Code into an integrated workspace for MongoDB API-compatible databases**, combining database browsing, querying, scripting, shell access, cloud discovery, local development, document management, and index administration.
 
 ```text
-AI
-Computer Vision
-Machine Learning
-Full-Stack Development
-FastAPI
-Next.js
-Python
-Docker
+                  CODE
+                   +
+                 QUERY
+                   +
+                DATABASE
+                   +
+              INFRASTRUCTURE
+                   │
+                   ▼
+          PRODUCTIVE DEVELOPMENT
+             INSIDE VS CODE
 ```
 
----
-
-# 🏆 Project Highlights
-
-```text
-┌─────────────────────────────────────────────┐
-│       WILDLIFE POPULATION INTELLIGENCE      │
-├─────────────────────────────────────────────┤
-│                                             │
-│   📷 Computer Vision                       │
-│          +                                  │
-│   🎙️ Bioacoustic Intelligence              │
-│          +                                  │
-│   🌿 Biodiversity Analytics                │
-│          +                                  │
-│   📊 Population Intelligence               │
-│          +                                  │
-│   🌍 Conservation Technology               │
-│                                             │
-│                 =                           │
-│                                             │
-│       DATA-DRIVEN WILDLIFE                 │
-│          CONSERVATION                      │
-│                                             │
-└─────────────────────────────────────────────┘
-```
-
----
-
-## 🌟 Why This Project?
-
-Wildlife conservation increasingly depends on the ability to collect, process, and interpret large amounts of ecological data.
-
-The **Wildlife Population Intelligence System** demonstrates how modern **Artificial Intelligence, Computer Vision, Bioacoustics, Data Analytics, and Full-Stack Engineering** can be integrated into a unified conservation platform.
-
-Instead of treating wildlife observations as isolated records, the system aims to transform them into **actionable conservation intelligence**.
-
-The project provides a foundation for future capabilities such as real-time wildlife monitoring, population forecasting, geospatial intelligence, automated threat detection, and large-scale biodiversity analytics.
-
-> **Technology for wildlife. Intelligence for conservation. 🌍🦁**
+**Build. Query. Explore. Manage. All from VS Code. 🚀**
