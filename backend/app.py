@@ -17,7 +17,7 @@ import jwt
 from backend.predict import predict_image
 from backend.predict_audio import predict_audio
 from backend.predict_reid import predict_reid, identify_detections
-
+from backend import report_service
 
 # ============================================================
 # APP
@@ -1955,4 +1955,107 @@ def population_analytics():
         raise HTTPException(
             status_code=500,
             detail=f"Population analytics failed: {str(e)}",
+        )
+
+
+# ============================================================
+# REPORTS
+# ============================================================
+
+@app.get("/reports")
+def list_reports():
+    """
+    Return available report types and recently generated reports.
+    """
+    try:
+        with get_connection() as conn:
+            return report_service.list_reports(conn)
+
+    except Exception as exc:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Unable to load reports: {str(exc)}",
+        )
+
+
+@app.post("/reports/generate")
+def generate_report(payload: dict):
+    """
+    Generate a PDF or Excel wildlife report.
+    """
+
+    try:
+        with get_connection() as conn:
+
+            result = report_service.generate(
+                conn,
+                payload,
+                generated_by=None,
+            )
+
+            return result
+
+    except ValueError as exc:
+        raise HTTPException(
+            status_code=400,
+            detail=str(exc),
+        )
+
+    except Exception as exc:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Report generation failed: {str(exc)}",
+        )
+
+
+@app.get("/reports/{report_id}/download")
+def download_report(report_id: str):
+    """
+    Download a previously generated report.
+    """
+
+    try:
+        with get_connection() as conn:
+
+            report = report_service.get_report(
+                conn,
+                report_id,
+            )
+
+        if not report:
+            raise HTTPException(
+                status_code=404,
+                detail="Report not found",
+            )
+
+        file_path = report["file_path"]
+
+        if not os.path.isfile(file_path):
+            raise HTTPException(
+                status_code=404,
+                detail="Report file no longer exists",
+            )
+
+        media_type = (
+            "application/pdf"
+            if report["format"] == "PDF"
+            else (
+                "application/vnd.openxmlformats-officedocument."
+                "spreadsheetml.sheet"
+            )
+        )
+
+        return FileResponse(
+            path=file_path,
+            media_type=media_type,
+            filename=os.path.basename(file_path),
+        )
+
+    except HTTPException:
+        raise
+
+    except Exception as exc:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Unable to download report: {str(exc)}",
         )
