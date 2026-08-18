@@ -1,0 +1,2 @@
+import type { ReactNode } from "react";
+export function PageHeader({breadcrumb,title,description,children}:{breadcrumb?:string;title:string;description:string;children?:ReactNode}){return <div className="flex flex-wrap items-end justify-between gap-5"><div><p className="text-sm text-[#6d756f]">{breadcrumb}</p><h1 className="mt-1 text-3xl font-extrabold ui-page-title tracking-[-.045em] text-[#263746]">{title}</h1><p className="mt-2 max-w-2xl text-sm text-[#6d756f]">{description}</p></div>{children}</div>}
