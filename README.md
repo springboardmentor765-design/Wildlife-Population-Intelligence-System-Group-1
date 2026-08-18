@@ -1,4 +1,4 @@
-# 🦁 Wildlife Population Intelligence System
+# EcoVision AI - Wildlife Population Intelligence System
 
 <p align="center">
   <strong>AI-Powered Wildlife Monitoring, Population Analytics & Conservation Intelligence Platform</strong>
@@ -211,46 +211,7 @@ Excel Report
 
 # 🏗️ System Architecture
 
-```text
-                    ┌──────────────────────┐
-                    │   Camera Trap Data   │
-                    └──────────┬───────────┘
-                               │
-                    ┌──────────▼───────────┐
-                    │     YOLO Engine      │
-                    │  Wildlife Detection  │
-                    └──────────┬───────────┘
-                               │
-              ┌────────────────┼────────────────┐
-              │                │                │
-              ▼                ▼                ▼
-        Species Data     Habitat Analysis   Behavior Data
-              │                │                │
-              └────────────────┼────────────────┘
-                               ▼
-                  ┌────────────────────────┐
-                  │ Conservation Intelligence │
-                  └────────────┬───────────┘
-                               │
-          ┌────────────────────┼────────────────────┐
-          │                    │                    │
-          ▼                    ▼                    ▼
-     PostgreSQL/SQLite    Analytics Engine    Report Generator
-          │                    │                    │
-          └────────────────────┼────────────────────┘
-                               ▼
-                    ┌─────────────────────┐
-                    │    FastAPI Backend  │
-                    │      REST API       │
-                    │   JWT Authentication│
-                    └──────────┬──────────┘
-                               │
-                               ▼
-                    ┌─────────────────────┐
-                    │    Next.js Web App  │
-                    │ Interactive Dashboard│
-                    └─────────────────────┘
-```
+
 
 ---
 
@@ -558,43 +519,6 @@ Protected resources require appropriate authentication and authorization.
 | `GET`  | `/dashboard`    | Retrieve analytics           |
 | `GET`  | `/reports`      | Retrieve generated reports   |
 
----
-
-# 📷 Wildlife Detection Workflow
-
-```text
-┌──────────────────┐
-│ Upload Image     │
-└────────┬─────────┘
-         ▼
-┌──────────────────┐
-│ Image Processing │
-└────────┬─────────┘
-         ▼
-┌──────────────────┐
-│ YOLO Detection   │
-└────────┬─────────┘
-         ▼
-┌──────────────────┐
-│ Species Detection│
-└────────┬─────────┘
-         ▼
-┌──────────────────┐
-│ Confidence Score │
-└────────┬─────────┘
-         ▼
-┌──────────────────┐
-│ Population Stats │
-└────────┬─────────┘
-         ▼
-┌──────────────────┐
-│ Database Storage │
-└────────┬─────────┘
-         ▼
-┌──────────────────┐
-│ Dashboard        │
-└──────────────────┘
-```
 
 ---
 
@@ -800,184 +724,6 @@ main
 
 ---
 
-# 🤝 Contributing
-
-Contributions are welcome and encouraged.
-
-### Contribution Process
-
-1. Fork the repository
-2. Clone your fork
-3. Create a feature branch
-4. Implement your changes
-5. Run tests
-6. Commit your changes
-7. Push the branch
-8. Open a Pull Request
-
-Before submitting a PR, ensure that:
-
-* Existing functionality is not broken
-* New functionality is tested
-* Code is reasonably documented
-* Secrets are not committed
-* Large generated files are excluded
-* The README is updated when required
-
----
-
-# 🗺️ Roadmap
-
-The project is designed to evolve into a comprehensive wildlife intelligence platform.
-
-## 🔜 Planned Improvements
-
-* [ ] Real-world bioacoustic classification model
-* [ ] Multi-camera wildlife tracking
-* [ ] GPS-based wildlife mapping
-* [ ] GIS integration
-* [ ] Satellite imagery analysis
-* [ ] Live drone-feed processing
-* [ ] Advanced species recommendation
-* [ ] Population forecasting
-* [ ] Computer vision re-identification
-* [ ] Mobile application
-* [ ] Real-time alerts
-* [ ] Multi-language support
-* [ ] Cloud deployment
-* [ ] Scalable production database
-* [ ] Advanced conservation prediction models
-
----
-
-# 🧠 Future AI Capabilities
-
-The long-term architecture can support more advanced intelligence pipelines:
-
-```text
-Computer Vision
-      +
-Bioacoustics
-      +
-Geospatial Intelligence
-      +
-Historical Population Data
-      │
-      ▼
-┌──────────────────────────┐
-│   Wildlife AI Engine     │
-├──────────────────────────┤
-│ Species Prediction       │
-│ Population Forecasting   │
-│ Behavior Analysis        │
-│ Threat Prediction        │
-│ Habitat Intelligence     │
-└────────────┬─────────────┘
-             ▼
-   Conservation Decision
-        Intelligence
-```
-
----
-
-# 📊 Project Impact
-
-The Wildlife Population Intelligence System is designed to address common challenges in traditional wildlife monitoring:
-
-| Traditional Challenge              | Proposed Solution                 |
-| ---------------------------------- | --------------------------------- |
-| Manual image inspection            | Automated AI detection            |
-| Large volumes of camera-trap data  | Computer vision pipeline          |
-| Difficult population monitoring    | Automated analytics               |
-| Fragmented wildlife observations   | Centralized intelligence platform |
-| Manual reporting                   | Automated report generation       |
-| Limited visualization              | Interactive dashboards            |
-| Wildlife audio analysis complexity | Bioacoustic intelligence pipeline |
-
----
-
-# 🌍 Real-World Applications
-
-Potential applications include:
-
-* 🐅 Wildlife sanctuaries
-* 🌳 National parks
-* 🦌 Forest departments
-* 🔬 Ecological research institutions
-* 🐘 Conservation organizations
-* 📷 Camera-trap monitoring programs
-* 🚁 Drone-based wildlife surveys
-* 🎙️ Acoustic biodiversity monitoring
-* 🌿 Ecosystem health assessment
-
----
-
-# 🛡️ Security Considerations
-
-The application should follow secure development practices when deployed in production.
-
-Recommended practices include:
-
-* Use strong JWT secrets
-* Store credentials in environment variables
-* Validate uploaded files
-* Restrict file types and file sizes
-* Apply authentication to protected endpoints
-* Implement role-based authorization
-* Sanitize user-provided input
-* Configure CORS appropriately
-* Avoid committing model/data secrets
-* Use HTTPS in production
-* Apply rate limiting to public APIs
-
----
-
-# 📦 Deployment
-
-The application is container-ready and can be deployed using Docker-based infrastructure.
-
-A production deployment can be structured as:
-
-```text
-                    Internet
-                       │
-                       ▼
-                Reverse Proxy
-                       │
-          ┌────────────┴────────────┐
-          ▼                         ▼
-   Next.js Frontend           FastAPI Backend
-                                     │
-                    ┌────────────────┼───────────────┐
-                    ▼                ▼               ▼
-                Database         AI Engine       File Storage
-```
-
-Possible production infrastructure can include:
-
-* Docker
-* Docker Compose
-* Cloud VM
-* Managed PostgreSQL
-* Object storage
-* Reverse proxy
-* CI/CD pipeline
-
----
-
-# ⭐ Support the Project
-
-If you find this project useful, consider supporting it by:
-
-* ⭐ Starring the repository
-* 🍴 Forking the project
-* 🐛 Reporting issues
-* 💡 Suggesting improvements
-* 🤝 Contributing code
-* 📢 Sharing the project
-
----
-
 # 📄 License
 
 This project is licensed under the **MIT License**.
@@ -988,7 +734,7 @@ See the [`LICENSE`](LICENSE) file for details.
 
 # 👨‍💻 Author
 
-## Ashwin Chauhan
+## Ashwin Chauhan - Team 1
 
 **Computer Science Engineer**
 
