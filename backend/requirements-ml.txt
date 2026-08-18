@@ -1,0 +1,9 @@
+# Optional ML runtimes — install after you drop trained weights into backend/ml_models/
+ultralytics>=8.3.0
+torch
+torchvision
+torchaudio
+transformers
+miniaudio
+pydub
+onnxruntime
