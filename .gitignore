@@ -1,0 +1,48 @@
+# Environment / secrets
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+ENV/
+.pytest_cache/
+.mypy_cache/
+
+# Node
+node_modules/
+dist/
+build/
+.vite/
+
+# macOS
+.DS_Store
+
+# IDE
+.vscode/
+.idea/
+
+# Logs
+*.log
+
+# Python databases / local DB files
+*.sqlite
+*.sqlite3
+*.db
+
+# PostgreSQL local/runtime files
+postgres-data/
+pgdata/
+
+# Uploaded/generated runtime files
+uploads/
+media/
+storage/
+
+# ML generated/cache files
+*.cache
+backend/audio_model/AnimalModel/model.safetensors
