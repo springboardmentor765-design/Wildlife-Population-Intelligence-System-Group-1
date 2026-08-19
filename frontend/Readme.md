@@ -15,27 +15,27 @@
 
 ---
 
-# 📌 Overview
+#  Overview
 
 The **Wildlife Population Intelligence System Frontend** is a modern, responsive web application built with **Next.js and React**.
 
 It provides a centralized interface for interacting with the wildlife intelligence backend and enables users to:
 
-* 📊 Monitor wildlife populations
-* 📷 Upload wildlife images
-* 🎥 Process wildlife videos
-* 🎙️ Analyze wildlife audio
-* 🗺️ Explore wildlife locations
-* 📈 Visualize population trends
-* 🚨 Monitor alerts and anomalies
-* 📄 Generate and view reports
-* 👥 Access role-specific dashboards
+*   Monitor wildlife populations
+*   Upload wildlife images
+*   Process wildlife videos
+*   Analyze wildlife audio
+*   Explore wildlife locations
+*   Visualize population trends
+*   Monitor alerts and anomalies
+*   Generate and view reports
+*  Access role-specific dashboards
 
 The frontend communicates with the **FastAPI backend through REST APIs**.
 
 ---
 
-# 🏗️ Frontend Architecture
+#  Frontend Architecture
 
 ```text
                          ┌──────────────────────────────┐
@@ -84,7 +84,7 @@ The frontend communicates with the **FastAPI backend through REST APIs**.
 
 ---
 
-# 🧩 Frontend Responsibilities
+#  Frontend Responsibilities
 
 The frontend acts as the **presentation and interaction layer** of the platform.
 
@@ -114,7 +114,7 @@ The frontend does not directly access the database. All persistent data operatio
 
 ---
 
-# 📂 Project Structure
+#  Project Structure
 
 A recommended frontend structure is:
 
@@ -174,22 +174,22 @@ wildlife-frontend/
 
 ---
 
-# 🖥️ Main Application Modules
+#   Main Application Modules
 
-## 📊 1. Dashboard
+##   1. Dashboard
 
 The dashboard provides a high-level overview of wildlife intelligence.
 
 ### Key Metrics
 
-* 🐾 Total species
-* 📷 Total detections
-* 📈 Population trends
-* 🌿 Biodiversity health
-* 🚨 Active alerts
-* 🗺️ Wildlife distribution
-* 🎯 AI confidence
-* 📅 Detection activity
+*   Total species
+*   Total detections
+*   Population trends
+*   Biodiversity health
+*   Active alerts
+*   Wildlife distribution
+*   AI confidence
+*   Detection activity
 
 Example:
 
@@ -211,7 +211,7 @@ Example:
 
 ---
 
-# 📷 2. Wildlife Detection
+#   2. Wildlife Detection
 
 The detection interface allows users to submit wildlife images for AI analysis.
 
@@ -253,7 +253,7 @@ Frontend Result View
 
 ---
 
-# 🎥 3. Video Intelligence
+#  3. Video Intelligence
 
 The video module provides a user interface for wildlife video processing.
 
@@ -292,7 +292,7 @@ The interface can display:
 
 ---
 
-# 🎙️ 4. Bioacoustic Intelligence
+#   4. Bioacoustic Intelligence
 
 The audio module allows users to submit wildlife recordings.
 
@@ -329,7 +329,7 @@ Possible frontend components:
 
 ---
 
-# 🗺️ 5. Wildlife Map
+#  5. Wildlife Map
 
 The map interface provides geographic visualization of wildlife observations.
 
@@ -362,7 +362,7 @@ Potential future functionality:
 
 ---
 
-# 📈 6. Analytics
+#  6. Analytics
 
 The analytics interface transforms backend data into visual insights.
 
@@ -396,7 +396,7 @@ Interactive Visualization
 
 ---
 
-# 🚨 7. Alerts
+# 7. Alerts
 
 The alerts interface provides visibility into unusual wildlife activity.
 
@@ -738,7 +738,7 @@ NEXT_PUBLIC_API_URL=https://your-api-domain.com
 
 ---
 
-# 🚀 Local Development
+#  Local Development
 
 ## 1. Navigate to Frontend
 
@@ -780,7 +780,7 @@ http://localhost:3000
 
 ---
 
-# 🏗️ Production Build
+#  Production Build
 
 Create an optimized production build:
 
@@ -796,7 +796,7 @@ npm start
 
 ---
 
-# 🧪 Testing
+# Testing
 
 Run the project's configured test command:
 
@@ -818,7 +818,7 @@ npx tsc --noEmit
 
 ---
 
-# 🐳 Docker
+#  Docker
 
 The frontend can be containerized as part of the complete application.
 
@@ -839,7 +839,7 @@ The root-level `docker-compose.yml` should be used when running the complete app
 
 ---
 
-# 📱 Responsive Design
+# Responsive Design
 
 The frontend is intended to support:
 
@@ -865,7 +865,7 @@ Mobile
 
 ---
 
-# 🧭 Recommended Navigation
+#  Recommended Navigation
 
 ```text
 ECO VISION AI

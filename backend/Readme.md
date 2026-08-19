@@ -735,27 +735,6 @@ Large binary media such as videos, images, and audio should be handled through a
 
 ---
 
-# ⚙️ Environment Configuration
-
-Create a local `.env` file for development.
-
-Example:
-
-```env
-DATABASE_URL=postgresql://<user>:<password>@<host>/<database>
-
-SECRET_KEY=your-secret-key
-
-JWT_SECRET_KEY=your-jwt-secret
-
-ALGORITHM=HS256
-
-ACCESS_TOKEN_EXPIRE_MINUTES=30
-```
-
-> Never commit `.env` files or production credentials to GitHub.
-
----
 
 
 # 🗺️ Future Backend Roadmap
@@ -815,16 +794,3 @@ ACCESS_TOKEN_EXPIRE_MINUTES=30
 
 ---
 
-# 🌍 Mission
-
-The backend is the intelligence and data-processing core of **ECO VISION AI**.
-
-Its objective is to provide a scalable foundation for transforming wildlife observations into structured intelligence that can support:
-
-* Wildlife researchers
-* Conservation officers
-* Forest departments
-* Ecological organizations
-* Biodiversity monitoring teams
-
-> **Observe. Analyze. Predict. Protect. 🦁🌿**
