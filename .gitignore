@@ -27,6 +27,12 @@ __pycache__/
 # ------------------------------------------
 # Python virtual environments
 # ------------------------------------------
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
 venv/
 .venv/
 env/
@@ -35,6 +41,21 @@ ENV/
 # ------------------------------------------
 # Python tooling / testing
 # ------------------------------------------
+
+# Environment variables / secrets
+.env
+.env.*
+!.env.example
+
+# IDE
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Python tooling
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/
@@ -76,6 +97,15 @@ coverage/
 # ------------------------------------------
 # Database files
 # ------------------------------------------
+# Build / distribution
+build/
+dist/
+*.egg-info/
+
+# Logs
+*.log
+
+# Database
 *.db
 *.sqlite
 *.sqlite3
@@ -98,5 +128,19 @@ results/*
 # ------------------------------------------
 # Temporary files
 # ------------------------------------------
+# Uploaded files
+uploads/*
+!uploads/.gitkeep
+
+# Generated results
+results/*
+!results/.gitkeep
+
+
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Temporary files
 *.tmp
 *.temp
