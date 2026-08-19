@@ -1,0 +1,42 @@
+export const recommendations = [
+  {
+    id: 'rec-01', rank: 1, priority: 'critical', title: 'Restore the Moyar riverbank buffer',
+    site: 'Moyar River Bank', category: 'Habitat restoration',
+    impact: 92, effort: 'High', window: 'Before Nov 2026 monsoon',
+    rationale: 'Riverine vegetation has lost 18% NDVI in 90 days while elephant use of the crossing has not dropped, concentrating a large herd on degraded ground.',
+    actions: ['Clear invasive Prosopis across 40 ha', 'Fence 2 km of the eastern bank from cattle', 'Replant native riparian species before October'],
+    species: ['Asian Elephant', 'Indian Gaur'],
+  },
+  {
+    id: 'rec-02', rank: 2, priority: 'high', title: 'Widen dhole monitoring across Sathyamangalam',
+    site: 'Sathyamangalam Tiger Reserve', category: 'Monitoring optimisation',
+    impact: 78, effort: 'Medium', window: 'Next survey cycle',
+    rationale: 'Dhole detections fell 31% year on year, but only three sites cover their range — the decline cannot yet be separated from reduced sampling effort.',
+    actions: ['Deploy six additional camera traps on ridge trails', 'Add pack-vocalisation model to the acoustic pipeline', 'Re-run density estimates after 60 days of capture'],
+    species: ['Dhole'],
+  },
+  {
+    id: 'rec-03', rank: 3, priority: 'high', title: 'Protect shola edges at Avalanche',
+    site: 'Avalanche Shola, Nilgiris', category: 'Wildlife protection',
+    impact: 74, effort: 'Medium', window: 'This quarter',
+    rationale: 'Exotic plantation creep has cut 9% of canopy at the shola boundary, the only habitat supporting the local Nilgiri tahr subpopulation.',
+    actions: ['Map plantation encroachment from drone imagery', 'Remove wattle regrowth on 15 ha of grassland', 'Establish quarterly tahr transect counts'],
+    species: ['Nilgiri Tahr'],
+  },
+  {
+    id: 'rec-04', rank: 4, priority: 'moderate', title: 'Reinstate the offline Moyar trap array',
+    site: 'Moyar River Bank', category: 'Resource allocation',
+    impact: 61, effort: 'Low', window: 'Within two weeks',
+    rationale: 'Camera CT-508 has been offline since 30 July, leaving the busiest elephant crossing in the landscape unmonitored during the migration window.',
+    actions: ['Replace battery pack and SD module on CT-508', 'Add a redundant trap 300 m upstream', 'Enable low-battery alerting for the array'],
+    species: ['Asian Elephant'],
+  },
+  {
+    id: 'rec-05', rank: 5, priority: 'moderate', title: 'Extend hornbill nest-tree protection',
+    site: 'Valparai Plateau, Anamalai', category: 'Conservation priority',
+    impact: 55, effort: 'Low', window: 'Before Jan 2027 nesting',
+    rationale: 'Acoustic detections confirm nine active hornbill territories, four of which sit on privately held plantation land with no protection agreement.',
+    actions: ['Register the four unprotected nest trees with estate owners', 'Fund nest-guard incentives for the 2027 season', 'Add nest-tree layer to the patrol map'],
+    species: ['Great Hornbill'],
+  },
+];
