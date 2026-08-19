@@ -1,0 +1,1 @@
+![EcoVision AI System Architecture](../screenshots/system.png)
