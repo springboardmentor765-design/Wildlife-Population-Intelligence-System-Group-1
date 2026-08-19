@@ -1,20 +1,30 @@
-# macOS
+# macOS / OS files
 .DS_Store
+Thumbs.db
 
-# Environment / secrets
+# Environment variables / secrets
 .env
 .env.*
 !.env.example
 
-# Python
+# Python cache
 __pycache__/
 *.py[cod]
 *.pyo
-.venv/
+*$py.class
+
+# Python virtual environments
 venv/
+.venv/
 env/
+ENV/
+
+# Python tooling
 .pytest_cache/
 .mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
 
 # Node / Next.js
 node_modules/
@@ -22,21 +32,35 @@ node_modules/
 out/
 .turbo/
 
-# Build / cache
-dist/
+# TypeScript
+*.tsbuildinfo
+
+# Build / distribution
 build/
+dist/
+*.egg-info/
 coverage/
-
-# Local uploads / generated files
-backend/uploads/
-uploads/
-
-# Logs
-*.log
 
 # IDE
 .vscode/
 .idea/
+
+# Logs
+*.log
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Local uploads / generated files
+backend/uploads/
+uploads/*
+!uploads/.gitkeep
+
+# Generated results
+results/*
+!results/.gitkeep
 
 # Jupyter
 .ipynb_checkpoints/
@@ -44,6 +68,3 @@ uploads/
 # Temporary files
 *.tmp
 *.temp
-
-# TypeScript
-*.tsbuildinfo*.tsbuildinfo
