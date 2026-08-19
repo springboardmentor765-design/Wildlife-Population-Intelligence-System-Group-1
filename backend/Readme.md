@@ -84,7 +84,7 @@ The backend exposes REST APIs consumed by the **Next.js frontend**.
 
 ---
 
-# 📂 Backend Structure
+#  Backend Structure
 
 The current backend follows a modular structure:
 
@@ -131,7 +131,7 @@ wildlife-backend/
 
 ---
 
-# 🧩 Core Components
+#  Core Components
 
 ## 1. `api/`
 
@@ -169,7 +169,7 @@ Frontend Request
 
 ---
 
-# 🗄️ 2. `database/`
+# 2. `database/`
 
 The `database` package manages database connectivity and persistence configuration.
 
@@ -200,7 +200,7 @@ Neon PostgreSQL
 
 ---
 
-# 🧱 3. `models/`
+# 3. `models/`
 
 The `models` package defines database entities using SQLAlchemy ORM.
 
@@ -222,7 +222,7 @@ Models provide the persistence layer between the application and PostgreSQL.
 
 ---
 
-# 📋 4. `schemas/`
+#  4. `schemas/`
 
 The `schemas` package contains **Pydantic models** used for API validation and serialization.
 
@@ -255,7 +255,7 @@ This helps maintain:
 
 ---
 
-# 🤖 5. `services/`
+# 5. `services/`
 
 The `services` directory contains the primary business logic of the application.
 
@@ -290,7 +290,7 @@ Service
 
 ---
 
-# 📷 6. `uploads/`
+# 6. `uploads/`
 
 The `uploads` directory is used for uploaded wildlife media.
 
@@ -316,7 +316,7 @@ uploads/
 
 ---
 
-# 📊 7. `results/`
+#  7. `results/`
 
 The `results` directory contains generated processing outputs.
 
@@ -340,7 +340,7 @@ Generated results may contain:
 
 ---
 
-# 🛠️ 8. `utils/`
+# 8. `utils/`
 
 The `utils` package contains reusable helper functionality.
 
@@ -356,7 +356,7 @@ Typical responsibilities include:
 
 ---
 
-# 🔄 9. `alembic/`
+# 9. `alembic/`
 
 **Alembic** is used for database schema migrations.
 
@@ -401,7 +401,7 @@ alembic history
 
 ---
 
-# 🚀 Application Entry Point
+# Application Entry Point
 
 The main FastAPI application starts from:
 
@@ -423,7 +423,7 @@ http://localhost:8000
 
 ---
 
-# 📡 API Documentation
+#  API Documentation
 
 FastAPI automatically provides interactive API documentation.
 
@@ -456,7 +456,7 @@ Swagger UI can be used to:
 
 ---
 
-# 🔐 Authentication
+#  Authentication
 
 The backend uses token-based authentication for protected resources.
 
@@ -492,7 +492,7 @@ Authorization: Bearer <ACCESS_TOKEN>
 
 ---
 
-# 👥 Authorization Roles
+#  Authorization Roles
 
 The platform supports role-oriented access.
 
@@ -522,7 +522,7 @@ Authorization should be enforced at the API/service layer rather than relying on
 
 ---
 
-# 🤖 AI/ML Processing
+# AI/ML Processing
 
 The backend is designed to integrate AI/ML processing into the wildlife intelligence pipeline.
 
@@ -553,7 +553,7 @@ Database
 
 ---
 
-# 🐾 Wildlife Detection
+# Wildlife Detection
 
 A typical image-analysis workflow is:
 
@@ -588,7 +588,7 @@ Frontend Dashboard
 
 ---
 
-# 🎥 Video Processing
+# Video Processing
 
 The backend can process wildlife video inputs through a dedicated processing pipeline.
 
@@ -616,7 +616,7 @@ Video Intelligence
 
 ---
 
-# 🎙️ Bioacoustic Processing
+# Bioacoustic Processing
 
 Audio data can be processed through an extensible audio intelligence pipeline.
 
@@ -644,7 +644,7 @@ Database / Analytics
 
 ---
 
-# 📈 Population Intelligence
+#  Population Intelligence
 
 Raw detections can be transformed into population-level insights.
 
@@ -680,7 +680,7 @@ Possible metrics include:
 
 ---
 
-# 🚨 Alert & Anomaly Intelligence
+# Alert & Anomaly Intelligence
 
 The backend can support automated wildlife alerts.
 
@@ -706,7 +706,7 @@ Conservation Dashboard
 
 ---
 
-# 🗃️ Database Architecture
+# Database Architecture
 
 The backend uses **PostgreSQL through Neon** for persistent application data.
 
@@ -757,342 +757,6 @@ ACCESS_TOKEN_EXPIRE_MINUTES=30
 
 ---
 
-# 🛠️ Local Development
-
-## 1. Clone the Repository
-
-```bash
-git clone https://github.com/yourusername/Wildlife-Population-Intelligence-System-Group-1.git
-```
-
-Navigate to the backend:
-
-```bash
-cd Wildlife-Population-Intelligence-System-Group-1/backend/wildlife-backend
-```
-
----
-
-## 2. Create Virtual Environment
-
-### Windows
-
-```bash
-python -m venv venv
-```
-
-Activate:
-
-```bash
-venv\Scripts\activate
-```
-
-### Linux / macOS
-
-```bash
-python3 -m venv venv
-source venv/bin/activate
-```
-
----
-
-## 3. Install Dependencies
-
-```bash
-pip install -r requirements.txt
-```
-
----
-
-## 4. Configure Environment Variables
-
-Create:
-
-```text
-.env
-```
-
-Add the required database and authentication configuration.
-
----
-
-## 5. Run Database Migrations
-
-```bash
-alembic upgrade head
-```
-
----
-
-## 6. Start the API
-
-```bash
-uvicorn main:app --reload
-```
-
-The API will start at:
-
-```text
-http://localhost:8000
-```
-
----
-
-# 🐳 Docker
-
-The backend includes a `Dockerfile` for containerized execution.
-
-Build the image:
-
-```bash
-docker build -t wildlife-backend .
-```
-
-Run the container:
-
-```bash
-docker run -p 8000:8000 wildlife-backend
-```
-
-For the complete application stack, use the root-level Docker Compose configuration.
-
----
-
-# 🧪 Testing
-
-Run backend tests with:
-
-```bash
-pytest
-```
-
-Verbose mode:
-
-```bash
-pytest -v
-```
-
-Run a specific test:
-
-```bash
-pytest test_alerts.py
-```
-
----
-
-# 🔍 Code Quality
-
-Recommended development checks:
-
-```bash
-python -m compileall .
-```
-
-Check installed dependencies:
-
-```bash
-pip list
-```
-
-For production development, consider integrating:
-
-* Ruff
-* Black
-* MyPy
-* Pytest
-* Pre-commit
-
----
-
-# 🔒 Security Best Practices
-
-Before production deployment:
-
-* Never expose `.env` files
-* Use strong JWT secrets
-* Validate uploaded files
-* Restrict upload size
-* Validate MIME types
-* Sanitize filenames
-* Implement authentication on protected endpoints
-* Enforce role-based authorization
-* Configure CORS securely
-* Use HTTPS
-* Add API rate limiting
-* Avoid storing sensitive credentials in source code
-* Keep dependencies updated
-* Use secure database credentials
-
----
-
-# 📦 Dependency Management
-
-Backend dependencies are maintained in:
-
-```text
-requirements.txt
-```
-
-Install all dependencies:
-
-```bash
-pip install -r requirements.txt
-```
-
-Generate an updated dependency list when required:
-
-```bash
-pip freeze > requirements.txt
-```
-
-> In a production workflow, dependency versions should ideally be reviewed and pinned deliberately rather than blindly freezing every local package.
-
----
-
-# 🌐 Frontend Integration
-
-The Next.js frontend communicates with this backend through REST APIs.
-
-```text
-┌──────────────────────┐
-│    Next.js Frontend  │
-│                      │
-│ Dashboard            │
-│ Maps                 │
-│ Reports              │
-│ Analytics            │
-└──────────┬───────────┘
-           │
-           │ HTTP / REST
-           ▼
-┌──────────────────────┐
-│    FastAPI Backend   │
-│                      │
-│ Authentication       │
-│ Wildlife API         │
-│ Analytics API        │
-│ Detection API        │
-│ Report API           │
-└──────────┬───────────┘
-           │
-           ▼
-┌──────────────────────┐
-│   Neon PostgreSQL    │
-└──────────────────────┘
-```
-
----
-
-# 📋 Development Workflow
-
-Recommended development flow:
-
-```text
-Create Feature Branch
-        │
-        ▼
-Implement Feature
-        │
-        ▼
-Run Tests
-        │
-        ▼
-Run API Locally
-        │
-        ▼
-Verify Database
-        │
-        ▼
-Commit Changes
-        │
-        ▼
-Push Branch
-        │
-        ▼
-Open Pull Request
-```
-
-Example:
-
-```bash
-git checkout -b feature/wildlife-detection
-```
-
-```bash
-git add .
-git commit -m "Add wildlife detection service"
-```
-
-```bash
-git push origin feature/wildlife-detection
-```
-
----
-
-# 🧭 Backend Development Principles
-
-The backend follows these architectural principles:
-
-### Separation of Concerns
-
-API routes should remain lightweight while business logic belongs in services.
-
-### Reusable Services
-
-AI, analytics, and processing logic should be reusable across multiple endpoints.
-
-### Schema Validation
-
-Pydantic schemas should validate external API data.
-
-### ORM-Based Persistence
-
-SQLAlchemy models provide structured database access.
-
-### Database Versioning
-
-Alembic manages schema evolution.
-
-### Secure Configuration
-
-Secrets and environment-specific configuration belong in environment variables.
-
-### API-First Design
-
-The backend should expose predictable, documented REST interfaces for frontend and future client integrations.
-
----
-
-# 🚀 Production Architecture
-
-A production deployment can evolve toward:
-
-```text
-                         Internet
-                            │
-                            ▼
-                     Reverse Proxy
-                            │
-                    HTTPS / SSL
-                            │
-              ┌─────────────┴─────────────┐
-              │                           │
-              ▼                           ▼
-       Next.js Frontend            FastAPI Backend
-                                          │
-                         ┌────────────────┼────────────────┐
-                         │                │                │
-                         ▼                ▼                ▼
-                  Neon PostgreSQL     AI/ML Engine    Object Storage
-                         │                                 │
-                         │                        Images / Videos
-                         │                        Audio / Reports
-                         │
-                         ▼
-                 Intelligence Data
-```
-
----
 
 # 🗺️ Future Backend Roadmap
 
