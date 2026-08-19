@@ -1,4 +1,4 @@
-# 🦁 Wildlife Population Intelligence System — Backend
+#  Wildlife Population Intelligence System — Backend
 
 <p align="center">
   <strong>FastAPI-powered backend for wildlife detection, population intelligence, analytics, authentication, and conservation data management.</strong>
@@ -15,29 +15,29 @@
 
 ---
 
-## 📌 Overview
+##  Overview
 
 The backend of the **Wildlife Population Intelligence System** provides the core API and intelligence infrastructure for the platform.
 
 It is built with **FastAPI** and follows a modular service-oriented architecture to handle:
 
-* 🔐 Authentication and authorization
-* 📷 Wildlife image processing
-* 🎥 Wildlife video processing
-* 🎙️ Bioacoustic analysis
-* 🐾 Species detection and classification
-* 📊 Population and biodiversity analytics
-* 🚨 Wildlife alerts and anomaly detection
-* 📍 GPS and habitat-related metadata
-* 💾 Database persistence
-* 📄 Result and report management
-* 🤖 AI/ML model integration
+*  Authentication and authorization
+*  Wildlife image processing
+*  Wildlife video processing
+*  Bioacoustic analysis
+*  Species detection and classification
+*  Population and biodiversity analytics
+*  Wildlife alerts and anomaly detection
+*  GPS and habitat-related metadata
+*  Database persistence
+*  Result and report management
+*  AI/ML model integration
 
 The backend exposes REST APIs consumed by the **Next.js frontend**.
 
 ---
 
-# 🏗️ Backend Architecture
+# Backend Architecture
 
 ```text
                          ┌─────────────────────────────┐
@@ -49,17 +49,17 @@ The backend exposes REST APIs consumed by the **Next.js frontend**.
                                         │
                                         ▼
                   ┌─────────────────────────────────────────┐
-                  │             FastAPI Backend              │
+                  │             FastAPI Backend             │
                   │                                         │
-                  │ Authentication • API • Business Logic  │
+                  │ Authentication • API • Business Logic   │
                   └───────────────┬─────────────┬───────────┘
                                   │             │
                        ┌──────────▼──────┐ ┌────▼──────────────┐
                        │   API Layer     │ │  Service Layer    │
-                       │                │ │                   │
-                       │ Routes         │ │ AI / ML Logic     │
-                       │ Validation     │ │ Detection         │
-                       │ Requests       │ │ Analytics         │
+                       │                │ │                    │
+                       │ Routes         │ │ AI / ML Logic      │
+                       │ Validation     │ │ Detection          │
+                       │ Requests       │ │ Analytics          │
                        │ Responses      │ │ Processing         │
                        └────────┬───────┘ └─────────┬─────────┘
                                 │                   │
@@ -68,7 +68,7 @@ The backend exposes REST APIs consumed by the **Next.js frontend**.
                          ┌────────────────▼────────────────┐
                          │          Data Layer             │
                          │                                 │
-                         │ SQLAlchemy • Models • Schemas  │
+                         │ SQLAlchemy • Models • Schemas   │
                          │ Database • Migrations           │
                          └────────────────┬────────────────┘
                                           │

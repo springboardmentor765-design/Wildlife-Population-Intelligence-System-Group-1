@@ -1,12 +1,12 @@
-# 🌿 EcoVision AI — System Architecture
+# EcoVision AI — System Architecture
 
 > **EcoVision AI** is an AI-powered Wildlife Intelligence System designed to detect wildlife, recognize animal sounds, analyze population trends, perform geospatial analysis, and generate actionable biodiversity insights.
 
 ---
 
-# 📌 1. System Overview
+# 1. System Overview
 
-EcoVision AI follows a **Full-Stack AI/ML Microservice Architecture** consisting of:
+EcoVision AI follows a **Full-Stack AI/ML Architecture** consisting of:
 
 - Next.js frontend
 - FastAPI backend
@@ -24,7 +24,7 @@ The architecture separates **AI research/training**, **production inference**, *
 
 ---
 
-# 🏗️ 2. High-Level System Architecture
+# 2. High-Level System Architecture
 
 ```text
                          ┌──────────────────────────┐
@@ -54,8 +54,8 @@ The architecture separates **AI research/training**, **production inference**, *
                          │ Authentication           │
                          │ Detection API            │
                          │ Audio API                │
-                         │ Population API            │
-                         │ Analytics API             │
+                         │ Population API           │
+                         │ Analytics API            │
                          │ Map API                  │
                          │ Reports API              │
                          └────────────┬─────────────┘
@@ -90,8 +90,8 @@ The architecture separates **AI research/training**, **production inference**, *
                          │     Data & Storage       │
                          │                          │
                          │ PostgreSQL / SQLite      │
-                         │ Image Storage             │
-                         │ Audio Storage             │
-                         │ GPS / Location Data       │
-                         │ Detection Metadata        │
+                         │ Image Storage            │
+                         │ Audio Storage            │
+                         │ GPS / Location Data      │
+                         │ Detection Metadata       │
                          └──────────────────────────┘
