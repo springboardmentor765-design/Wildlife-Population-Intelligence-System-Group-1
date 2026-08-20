@@ -42,3 +42,6 @@ Thumbs.db
 .idea/
 .vscode/
 *.log
+
+# Next.js
+.next/
