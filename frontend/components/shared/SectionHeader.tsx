@@ -1,0 +1,1 @@
+export function SectionHeader({title,description}:{title:string;description?:string}){return <div><h2 className="font-semibold text-[#263746]">{title}</h2>{description&&<p className="mt-1 text-sm text-[#6d756f]">{description}</p>}</div>}
