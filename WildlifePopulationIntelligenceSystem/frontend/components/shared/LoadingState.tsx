@@ -1,0 +1,1 @@
+export function LoadingState(){return <div className="animate-pulse space-y-4 p-7"><div className="flex items-center gap-3"><div className="h-9 w-9 rounded-xl bg-[#dcebe7]"/><div className="h-4 w-1/3 rounded-full bg-[#e4e8e4]"/></div><div className="h-24 rounded-2xl bg-[#edf2ef]"/><div className="h-3 w-2/3 rounded-full bg-[#e4e8e4]"/></div>}
