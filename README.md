@@ -29,9 +29,7 @@
 
 ## 🌍 Overview
 
-The **Wildlife Population Intelligence System** is an end-to-end AI-powered conservation platform designed to transform wildlife monitoring into a data-driven intelligence workflow.
-
-The system combines **Computer Vision, Bioacoustic Analysis, Population Analytics, Habitat Intelligence, and Interactive Dashboards** to help researchers and conservation teams monitor wildlife populations and ecosystem health.
+The Wildlife Population Intelligence System is an end-to-end AI-powered conservation platform designed to modernize wildlife monitoring through a data-driven intelligence workflow. By integrating computer vision, bioacoustic analysis, population analytics, habitat intelligence, and interactive dashboards, the system empowers researchers and conservation teams to effectively track wildlife populations and safeguard ecosystem health.
 
 The platform can process multiple sources of wildlife data, including:
 
