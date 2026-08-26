@@ -1,0 +1,2 @@
+import { Inbox } from "lucide-react";
+export function EmptyState({title="No results yet",description="Try changing your filters or check back later."}:{title?:string;description?:string}){return <div className="grid min-h-48 place-items-center p-8 text-center"><div><div className="mx-auto grid h-12 w-12 place-items-center rounded-2xl bg-[#e3efec] text-[#2d7c78]"><Inbox size={21}/></div><p className="mt-4 font-bold">{title}</p><p className="mt-1 text-sm text-[#6d756f]">{description}</p></div></div>}

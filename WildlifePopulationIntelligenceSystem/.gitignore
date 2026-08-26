@@ -1,0 +1,49 @@
+# macOS
+.DS_Store
+
+# Environment / secrets
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+env/
+.pytest_cache/
+.mypy_cache/
+
+# Node / Next.js
+node_modules/
+.next/
+out/
+.turbo/
+
+# Build / cache
+dist/
+build/
+coverage/
+
+# Local uploads / generated files
+backend/uploads/
+uploads/
+
+# Logs
+*.log
+
+# IDE
+.vscode/
+.idea/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Temporary files
+*.tmp
+*.temp
+
+# TypeScript
+*.tsbuildinfo*.tsbuildinfo
